@@ -14,7 +14,14 @@
 
 ## 1. Project Summary
 
-Write 5–8 lines explaining the assigned project.
+PropVista Realty — a fictional property marketplace operating across several cities — has useful data but no trusted
+market view. Listings arrive from brokers, locality details sit in a separate master file, leads come from a CRM export,
+and price/status changes arrive later as event updates. Prices are sometimes outside realistic bands, leads reference
+listings that do not exist, the same listing_id appears twice with conflicting prices, and a few sold listings have no sold
+date. Every review meeting ends with the same question: which localities are moving, which listings are stale, and
+which broker activity is actually converting? Your team of three has been brought in to build one trusted pipeline that
+turns property-market noise into decision-ready numbers — and to prove the numbers can be trusted.
+
 
 Example structure:
 

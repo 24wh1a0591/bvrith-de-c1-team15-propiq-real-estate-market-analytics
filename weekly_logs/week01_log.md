@@ -5,7 +5,6 @@
 **Team:** Team-15
 **Project:** PropIQ Real Estate Market Analytics
                
-# Changes##
 
 ---
 # Week 01 Log

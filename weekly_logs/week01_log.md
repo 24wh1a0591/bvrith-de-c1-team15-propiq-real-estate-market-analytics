@@ -2,9 +2,9 @@
 
 **Week:** 1  
 **Date range:** [Add dates]  
-**Team:** [Team-15]  
-**Project:** [PropIQ
-Real Estate Market Analytics]
+**Team:** Team-15
+**Project:** PropIQ
+Real Estate Market Analytics
 # Changes##
 
 ---

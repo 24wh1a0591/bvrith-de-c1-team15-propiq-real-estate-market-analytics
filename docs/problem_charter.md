@@ -3,7 +3,7 @@
 **Week:** 1  
 **Owner(s):** [Ms.Thota Madhulika], [Ms.P.Lakshmi Naga Sree], [Ms. Vadlamuru Rishitha]   
 **Project:** [PropIQ Real Estate Market Analytics]
-#changes##
+
 ---
 # Problem Charter
 

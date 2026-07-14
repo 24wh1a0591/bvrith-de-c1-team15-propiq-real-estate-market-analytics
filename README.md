@@ -1,4 +1,5 @@
-# [PROJECT TITLE]
+# PropIQ
+Real Estate Market Analytics
 
 > **Student note:** Start with `00_START_HERE.md` and `00_TEMPLATE_INDEX.md`. The placeholder files inside this repo are the templates.
 
@@ -25,11 +26,14 @@ turns property-market noise into decision-ready numbers — and to prove the num
 
 Example structure:
 
-- **Domain:** [Urban Mobility / IPL Matchday / Weather / etc.]
-- **Core engineering problem:** [What raw data needs to become trusted insight?]
+- **Domain:** Real estate market analytics — educational, synthetic, and non-personal; no scraping of
+live property portals. 
+- **Core engineering problem:** Path B — synthetic, modeled on a Kaggle housing / property listing dataset schema. Your
+team generates the data from a committed script; nothing real or personal is redistributed.
 - **Main pipeline:** Raw Sources → Bronze → Silver → Data Quality → Gold → Power BI → Streaming Simulation
 - **Final outcome:** GitHub repo, Databricks notebooks, Gold outputs, Power BI dashboard, streaming simulation, final demo.
-
+- Working pipeline + 4-view dashboard + live metric demo + GitHub repo that proves it all
+- **Stack:** Databricks Free Edition · Spark SQL first (light PySpark) · GitHub · Power BI Desktop
 ---
 
 ## 2. Tools Used

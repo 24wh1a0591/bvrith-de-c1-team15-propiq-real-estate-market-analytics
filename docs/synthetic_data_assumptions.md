@@ -1,13 +1,13 @@
 # Synthetic Data Assumptions
 
 **Week:** 2  
-**Purpose:** Document how educational data is created.
+**Purpose:** Document how synthetic real estate market data is created.
 
 ---
 
 ## 1. Synthetic Data Boundary
 
-This project uses synthetic educational data only. It must not be presented as real company, customer, citizen, player, patient, government, or platform data.
+This project uses synthetic real estate market data only. It must not be presented as real property listings, brokers, agencies, buyers, customers, companies, or government records. All datasets are fictional and created solely for educational purposes to demonstrate data engineering concepts including ingestion, transformation, data quality validation, and analytics.
 
 ---
 
@@ -15,11 +15,11 @@ This project uses synthetic educational data only. It must not be presented as r
 
 | Area | Assumption |
 |---|---|
-| Geography / scope | [Example: Hyderabad and nearby regions] |
-| Time period | [Example: July to September 2026] |
-| Source systems | [Example: Two different operational feeds] |
-| Event types | [Example: booking, scan, alert, transaction] |
-| Reference data | [Example: zones, categories, products, venues] |
+| Geography / scope | Synthetic property market covering multiple Indian cities including Hyderabad, Bengaluru, and Pune through fictional localities. |
+| Time period | Listings, broker data, and buyer leads represent activity primarily during 2024–2026, with controlled future timestamps included only for data quality testing. |
+| Source systems | Four independent operational source systems: Listings, Localities, Leads, and Brokers, plus controlled listing status event drops for streaming simulation. |
+| Event types | Property listing creation, price updates, listing status changes, buyer lead generation, broker management, and controlled streaming events. |
+| Reference data | Localities, cities, zones, market segments, brokers, property types, and pricing reference values. |
 
 ---
 
@@ -27,10 +27,11 @@ This project uses synthetic educational data only. It must not be presented as r
 
 | File | Approximate Rows | Reason |
 |---|---:|---|
-| `[source_file_1].csv` | [rows] | [reason] |
-| `[source_file_2].csv` | [rows] | [reason] |
-| `[reference_file].csv` | [rows] | [reason] |
-| `[streaming_events].json` | [rows] | [reason] |
+| `listings.parquet` | 50,200 | Primary property listing dataset used as the central business entity. |
+| `leads.csv` | 120,800 | Simulates multiple buyer enquiries for each property listing. |
+| `brokers.csv` | 320 | Synthetic broker and agency master data. |
+| `localities.json` | 80 | Locality reference data used for enrichment and analytics. |
+| `listing_status_event_drop_01–06.json` | Small controlled event batches | Used to simulate streaming scenarios including duplicates, late events, malformed records, invalid payloads, and schema drift. |
 
 ---
 
@@ -38,11 +39,11 @@ This project uses synthetic educational data only. It must not be presented as r
 
 | Issue Type | Approx. Share | Why Include It |
 |---|---:|---|
-| Duplicate IDs | 0.2%–0.5% | Tests uniqueness |
-| Missing values | 1%–3% | Tests completeness |
-| Invalid reference keys | 0.5%–1% | Tests referential integrity |
-| Negative / impossible values | 0.1%–0.5% | Tests range rules |
-| Timestamp inconsistencies | 0.1%–0.3% | Tests chronology |
+| Duplicate IDs | 0.2%–0.5% | Tests duplicate detection and deduplication logic. |
+| Missing values | 1%–3% | Tests completeness and null-value handling. |
+| Invalid reference keys | 0.5%–1% | Tests foreign key and referential integrity validation. |
+| Negative / impossible values | 0.1%–0.5% | Tests business rule and numeric range validation. |
+| Timestamp inconsistencies | 0.1%–0.3% | Tests chronology, late-arriving data, and event ordering. |
 
 ---
 
@@ -50,8 +51,8 @@ This project uses synthetic educational data only. It must not be presented as r
 
 Before using generated data, the team must check:
 
-- Row counts are reasonable.
-- Key fields exist.
-- Dates and numeric values look realistic.
-- Controlled defects exist but do not dominate the dataset.
-- Source files are different enough to require real standardization.
+- Row counts match the expected dataset sizes.
+- Primary and foreign key fields exist in every source.
+- Dates, prices, areas, ratings, and other numeric values fall within realistic ranges.
+- Controlled data quality issues are present only in small quantities and do not dominate the dataset.
+- Source files represent different business entities and require proper standardization before integration.

@@ -1,7 +1,7 @@
 # Week 04 Log — Source-to-Bronze Ingestion
 
 **Week:** 4
-**Date range:** [Add dates]
+**Date range:** [31.07.2026]
 **Team:** P15 — PropIQ
 **Project:** PropIQ Real Estate Market Analytics
 

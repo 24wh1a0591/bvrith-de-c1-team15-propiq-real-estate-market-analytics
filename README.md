@@ -7,8 +7,11 @@ Real Estate Market Analytics
 **Program:** ZENAIZ x BVRIT Hyderabad Data Engineering Internship Program  
 **Track:** Data Engineering  
 **Duration:** 12 Weeks  
-**Team:** [15 / Team -15]  
-**Students:** [Ms.Thota Madhulika], [Ms.P.Lakshmi Naga Sree], [Ms. Vadlamuru Rishitha]  
+**Team:** Team 15  
+**Members:**
+- Thota Madhulika
+- P. Lakshmi Naga Sree
+- Vadlamuru Rishitha  
 **AI Teammate:** Used responsibly for explanation, debugging, review, and documentation support.
 
 ---
@@ -24,6 +27,16 @@ which broker activity is actually converting? Your team of three has been brough
 turns property-market noise into decision-ready numbers — and to prove the numbers can be trusted.
 
 
+## Pipeline Architecture
+
+Raw Sources → Bronze → Silver → Data Quality → Trusted / Quarantine → Gold → Power BI → Streaming
+
+- Bronze: Raw ingestion with metadata
+- Silver: Cleaned and standardized tables
+- Data Quality: Rule-based validation with failure tracking
+- Gold: Aggregated business metrics
+- Streaming: Simulated real-time updates using JSON events
+  
 Example structure:
 
 - **Domain:** Real estate market analytics — educational, synthetic, and non-personal; no scraping of
@@ -95,6 +108,15 @@ team generates the data from a committed script; nothing real or personal is red
 
 ## 6. Final Project Proof
 
+## Key Outputs
+
+- Bronze tables created from raw CSV/JSON data
+- Silver tables with standardized schema
+- Data Quality checks with failed records captured
+- Gold KPI tables for analytics
+- Power BI dashboard built from Gold layer
+- Streaming simulation with event-driven updates
+  
 By Week 12, this repository should prove:
 
 - We designed source datasets.

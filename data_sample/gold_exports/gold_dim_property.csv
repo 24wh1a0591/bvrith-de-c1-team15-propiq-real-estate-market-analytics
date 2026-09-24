@@ -1,0 +1,16 @@
+property_key,property_type,furnishing,_gold_created_at,_gold_schema_version
+1,Apartment,Furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+2,Apartment,Semi-furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+3,Apartment,Unfurnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+4,Row House,Furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+5,Row House,Semi-furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+6,Row House,Unfurnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+7,Studio,Furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+8,Studio,Semi-furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+9,Studio,Unfurnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+10,Unknown Tower,Furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+11,Unknown Tower,Semi-furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+12,Unknown Tower,Unfurnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+13,Villa,Furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+14,Villa,Semi-furnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0
+15,Villa,Unfurnished,2026-09-17T07:57:15.728Z,propiq_gold_v1.0

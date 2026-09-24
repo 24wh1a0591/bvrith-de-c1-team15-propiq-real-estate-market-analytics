@@ -1,0 +1,7 @@
+listing_status_key,listing_status,is_completed_status,_gold_created_at,_gold_schema_version
+1,active,false,2026-09-17T07:57:35.240Z,propiq_gold_v1.0
+2,expired,false,2026-09-17T07:57:35.240Z,propiq_gold_v1.0
+3,paused,false,2026-09-17T07:57:35.240Z,propiq_gold_v1.0
+4,rented,true,2026-09-17T07:57:35.240Z,propiq_gold_v1.0
+5,sold,true,2026-09-17T07:57:35.240Z,propiq_gold_v1.0
+6,withdrawn,false,2026-09-17T07:57:35.240Z,propiq_gold_v1.0

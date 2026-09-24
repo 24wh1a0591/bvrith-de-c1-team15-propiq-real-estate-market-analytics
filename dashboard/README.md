@@ -1,67 +1,115 @@
-# PropIQ Power BI Dashboard
+# PropIQ — Power BI Dashboard
 
-## 1. Purpose
+**Project:** P15 PropIQ — Real Estate Market Analytics  
+**Team:** Team 15  
+**Week:** 9  
+**Platform:** Microsoft Power BI  
+**Data Layer:** Gold  
 
-This dashboard provides a business-facing view of
-real-estate listing, lead, locality, broker and inventory
-performance using validated Gold-layer data.
+---
 
-## 2. Gold Sources
+## 1. Dashboard Overview
 
-| Gold Table | Grain | Purpose |
+The PropIQ Power BI dashboard provides a Gold-layer analytical view of:
+
+- Real-estate listing activity
+- Property pricing
+- Price per square foot
+- Locality performance
+- Property-type distribution
+- Broker performance
+- Lead channels
+- Lead conversion
+- Inventory age
+
+The dashboard continues the approved Week-8 Power BI model and is refined during Week 9.
+
+**Source rule:** Power BI uses approved Gold-layer outputs only.
+
+Raw, Bronze, Silver Candidate, Trusted Silver detail, and Quarantine data are not used directly by the dashboard.
+
+---
+
+## 2. Dashboard Pages
+
+| Page | Purpose | Main Visuals |
 |---|---|---|
-| gold_fact_listing | one row per listing | Listing KPIs |
-| gold_fact_lead | one row per lead | Lead/conversion KPIs |
-| gold_dim_locality | one row per locality | Locality analysis |
-| gold_dim_property | one row per property | Property analysis |
-| gold_dim_broker | one row per broker | Broker performance |
-| ... | ... | ... |
+| Page 1: Market Overview | Overall market summary | KPI cards, monthly trend, property/price distribution, locality inventory |
+| Page 2: Locality & Pricing Intelligence | Compare pricing and inventory across locations | Median price, price/sqft, locality comparison, property-type pricing |
+| Page 3: Listing / Broker / Lead | Analyse listing, broker and lead performance | Broker performance, lead channels, conversion, inventory age, lead analysis |
 
-## 3. Power BI Tables
+---
 
-Document the mapping:
+## 3. Gold Tables Used
 
-Gold table → Power BI table
+| Gold Table | Purpose | Dashboard Use |
+|---|---|---|
+| `gold_dim_date` | Date dimension | Date filtering and trends |
+| `gold_dim_locality` | Locality dimension | Locality filtering and comparison |
+| `gold_dim_property` | Property dimension | Property-type analysis |
+| `gold_dim_broker` | Broker dimension | Broker analysis |
+| `gold_dim_listing_status` | Listing status | Listing status analysis |
+| `gold_dim_price_band` | Price-band dimension | Price-band analysis |
+| `gold_dim_lead_channel` | Lead-channel dimension | Lead-channel analysis |
+| `gold_fact_listing` | Listing-level fact | Listings, pricing, inventory and trends |
+| `gold_fact_lead` | Lead-level fact | Leads and conversion |
+| `gold_locality_price_summary` | Locality pricing summary | Locality and pricing analysis |
+| `gold_listing_performance_summary` | Listing performance | Listing KPIs |
+| `gold_lead_conversion_summary` | Lead conversion | Conversion KPIs |
+| `gold_broker_performance_summary` | Broker performance | Broker comparison |
+| `gold_inventory_age_summary` | Inventory age | Days-on-market/inventory analysis |
 
-## 4. Relationships
+---
 
-Document:
+## 4. Page-to-Gold Mapping
 
-- relationship
-- cardinality
-- filter direction
-- reason
+| Dashboard Page | Gold Table(s) Used | Important Fields / Metrics |
+|---|---|---|
+| Market Overview | `gold_fact_listing`, `gold_fact_lead`, `gold_listing_performance_summary`, `gold_lead_conversion_summary` | Active listings, median price, price/sqft, leads, conversion |
+| Locality & Pricing Intelligence | `gold_locality_price_summary`, `gold_fact_listing`, `gold_dim_locality`, `gold_dim_property`, `gold_dim_price_band` | Locality, median price, median price/sqft, property type, price band |
+| Listing / Broker / Lead | `gold_fact_listing`, `gold_fact_lead`, `gold_broker_performance_summary`, `gold_lead_conversion_summary`, `gold_inventory_age_summary`, `gold_dim_broker`, `gold_dim_lead_channel` | Broker performance, leads, conversion, lead channels, inventory age |
 
-## 5. Measures
+---
 
-List the DAX measures.
+## 5. Main KPIs
 
-## 6. Dashboard Pages
+The dashboard uses approved Gold KPI definitions.
 
-### Page 1 — Market Overview
+### Market KPIs
 
-Business questions:
-- How many active listings exist?
-- What is the median listing price?
-- What is the median price per sq ft?
-- How are listings changing monthly?
-- Which localities have higher inventory?
+- Active Listings
+- Median Listing Price
+- Median Price / Sq Ft
+- Total Trusted Leads
+- Lead Conversion Rate
 
-## 7. Validation
+### Operational KPIs
 
-Power BI values are reconciled against
-their owning Gold tables.
+- Listing Performance
+- Broker Performance
+- Lead Channel Distribution
+- Average Leads per Listing
+- Average Days on Market
+- Inventory Age
 
-## 8. Refresh
+KPI definitions are not recreated independently in Power BI when an approved Gold definition already exists.
 
-Document how the Gold exports are regenerated
-and refreshed.
+---
 
-## 9. Known Limitations
+## 6. Power BI Model
 
-Document anything not yet implemented.
+The model keeps listing and lead facts separate.
 
-## 10. Week 9 Handoff
+```text
+Gold Dimensions
+       |
+       | 1 : *
+       v
+gold_fact_listing
 
-The same PBIX will continue into Week 9
-for dashboard refinement and insight development.
+
+Gold Dimensions
+       |
+       | 1 : *
+       v
+gold_fact_lead

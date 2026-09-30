@@ -1,0 +1,5 @@
+entity,source_file,batch_id,total_evaluated_rows,trusted_rows,quarantined_rows,dq_pass_rate_pct,_gold_created_at,_gold_schema_version
+listings,listings.parquet,BATCH-2026-01,50200,49000,1200,97.61,2026-09-29T18:08:38.138Z,propiq_gold_v1.0
+leads,leads.csv,BATCH-2026-01,120800,118000,2800,97.68,2026-09-29T18:08:38.138Z,propiq_gold_v1.0
+localities,localities.json,BATCH-2026-01,80,80,0,100.00,2026-09-29T18:08:38.138Z,propiq_gold_v1.0
+brokers,brokers.csv,BATCH-2026-01,320,320,0,100.00,2026-09-29T18:08:38.138Z,propiq_gold_v1.0

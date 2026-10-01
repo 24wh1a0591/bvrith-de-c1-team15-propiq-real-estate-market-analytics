@@ -15,6 +15,7 @@ The Power BI layer uses approved Gold data only, while preserving the grain and 
 
 ---
 
+
 ## 2. Work Completed
 
 | Task | Owner | Status | Evidence |

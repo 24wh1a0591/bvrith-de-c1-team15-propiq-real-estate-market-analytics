@@ -1,27 +1,31 @@
 {
-  "topic_name": "project.events",
-  "implementation_status": "design_only_not_mandatory",
-  "description": "Kafka-style event design for production architecture awareness. Kafka implementation is not required for this internship.",
-  "key": {
-    "field": "event_id",
-    "type": "string"
+  "event_name": "propiq_listing_status_event",
+  "version": "1.0",
+  "implementation_status": "design_contract_only",
+  "description": "PropIQ listing-status event contract used by the controlled Week-10 JSON simulation. Kafka deployment is not required.",
+  "key": {"field": "listing_event_id", "type": "string", "required": true},
+  "fields": [
+    {"name": "listing_event_id", "type": "string", "required": true, "description": "Unique event identifier used for deduplication"},
+    {"name": "listing_id", "type": "string", "required": true, "description": "Parent listing identifier"},
+    {"name": "event_type", "type": "string", "required": true, "description": "Listing lifecycle event type"},
+    {"name": "event_timestamp", "type": "timestamp", "required": true, "description": "Business event time used for watermark and late-event checks"},
+    {"name": "event_sequence", "type": "integer", "required": true, "description": "Per-listing ordering control"},
+    {"name": "listing_status", "type": "string", "required": true, "description": "Listing status carried by the event"},
+    {"name": "asking_price", "type": "long", "required": true, "description": "Event-time asking price in INR"},
+    {"name": "locality_id", "type": "string", "required": true, "description": "Locality reference"},
+    {"name": "broker_id", "type": "string", "required": true, "description": "Broker reference"},
+    {"name": "property_type", "type": "string", "required": true, "description": "Property category"},
+    {"name": "bedrooms", "type": "integer", "required": true, "description": "Bedroom count"},
+    {"name": "area_sqft", "type": "integer", "required": true, "description": "Property area in square feet"},
+    {"name": "source_system", "type": "string", "required": true, "description": "Producing source identifier"},
+    {"name": "schema_version", "type": "string", "required": true, "description": "Source event schema version"},
+    {"name": "ingestion_timestamp", "type": "timestamp", "required": true, "description": "Source ingestion timestamp"}
+  ],
+  "schema_drift_rule": {
+    "unknown_fields": "rescue_and_flag",
+    "automatic_promotion": false,
+    "example": "marketing_campaign"
   },
-  "value_schema": {
-    "event_id": "string",
-    "event_timestamp": "timestamp",
-    "event_type": "string",
-    "entity_id": "string",
-    "severity": "string",
-    "payload": "object"
-  },
-  "sample_event": {
-    "event_id": "EVT-001",
-    "event_timestamp": "2026-07-03T18:00:00+05:30",
-    "event_type": "alert",
-    "entity_id": "ENT-0001",
-    "severity": "medium",
-    "payload": {
-      "message": "Sample event"
-    }
-  }
+  "event_type_examples": ["created", "price_changed", "paused", "reactivated", "sold"],
+  "runtime_note": "The repository uses JSON files and Databricks Structured Streaming/Auto Loader. Kafka is architecture awareness only."
 }

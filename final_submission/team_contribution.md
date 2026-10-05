@@ -1,42 +1,29 @@
 # Team Contribution
 
-**Week:** 12  
-**Purpose:** Show clear ownership and collaboration.
+**Team:** Team 15  
+**Project:** P15 PropIQ — Real Estate Market Analytics
 
----
+## Members and primary ownership
+| Student | Primary ownership evidenced in weekly logs |
+|---|---|
+| Thota Madhulika | Exploration, Gold handoff/reconciliation, Power BI foundation/refinement and pipeline documentation |
+| P. Lakshmi Naga Sree | Exploration/Silver work, Gold fact construction and dashboard page work |
+| Vadlamuru Rishitha | Exploration/DQ validation, KPI/summary construction and dashboard performance analysis |
 
-## 1. Team Members
+These are primary ownership areas, not exclusive ownership. Validation and review were shared.
 
-| Student | Primary Role | Key Contributions | Evidence |
-|---|---|---|---|
-| [Student 1] | Data Pipeline Lead | [contribution] | [file/notebook] |
-| [Student 2] | Quality and Metrics Lead | [contribution] | [file/notebook] |
-| [Student 3] | Dashboard and Demo Lead | [contribution] | [file/dashboard] |
+## Collaboration
+The team reviewed schemas, DQ rules, grain, Gold reconciliation, dashboard values and streaming controls collectively.
 
----
+## Individual reflection
+### Thota Madhulika
+Worked across exploration, Gold validation, dashboard integration and final pipeline documentation, with emphasis on traceability and reconciliation.
 
-## 2. Role Rotation / Collaboration
+### P. Lakshmi Naga Sree
+Focused on Silver transformations, Gold fact construction and dashboard implementation, with emphasis on grain preservation.
 
-Explain how team members helped outside their primary role.
+### Vadlamuru Rishitha
+Focused on DQ validation, KPI/summary construction and dashboard performance analysis, with emphasis on quality controls and metric correctness.
 
----
-
-## 3. Individual Learning Reflection
-
-### Student 1
-
-[3–5 lines]
-
-### Student 2
-
-[3–5 lines]
-
-### Student 3
-
-[3–5 lines]
-
----
-
-## 4. AI Usage Summary
-
-Explain where AI helped and what the team verified manually.
+## AI usage
+AI supported documentation, debugging and review. The team verified schemas, execution outputs, table names, grain, reconciliations and dashboard lineage manually.

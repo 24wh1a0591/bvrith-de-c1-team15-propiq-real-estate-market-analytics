@@ -1,111 +1,42 @@
-# Data Dictionary
+# PropIQ Data Dictionary
 
-**Week:** 2  
-**Purpose:** Define the source datasets, reference datasets, canonical Silver schema, and streaming event schema used in the PropIQ Real Estate Market Analytics project.
+**Purpose:** Govern the source, Silver Candidate/Trusted, Gold and streaming schemas for PropIQ.
 
----
+## Source catalog
+| Source | Grain | Role |
+|---|---|---|
+| `listings.parquet` | one physical listing row; `record_uid` is the physical key | Primary listing source |
+| `leads.csv` | one physical lead row; `record_uid` is the physical key | CRM lead source |
+| `localities.json` | one locality master row | Reference source |
+| `brokers.csv` | one broker master row | Reference source |
+| `listing_status_event_drop_*.json` | one listing-status event | Week-10 streaming source |
 
-## 1. Source File Catalog
+## Core source fields
+**Listings:** `record_uid`, `listing_id`, `locality_id`, `broker_id`, `property_type`, `furnishing`, `bedrooms`, `built_up_area_sqft`, `asking_price_inr`, `price_per_sqft`, `listing_status`, `listing_created_date`, `completion_date`, `last_updated_timestamp`.
 
-| File Name | Grain | Purpose | Approx. Rows | Notes |
-|---|---|---|---:|---|
-| `listings.parquet` | One row per property listing | Stores property listing details including price, property type, broker, locality, and listing status | As provided | Primary source dataset |
-| `leads.csv` | One row per buyer lead | Stores buyer enquiries and lead information associated with property listings | As provided | Transactional dataset |
-| `localities.json` | One row per locality | Stores locality master information such as locality name, city, zone, and market segment | As provided | Reference/master dataset |
-| `brokers.csv` | One row per broker | Stores broker and agency information including broker tier and service rating | As provided | Reference/master dataset |
-| `listing_status_event_drop_*.json` | One row per listing status event | Simulates streaming updates for property listing status changes | Varies | Used for Week 10 streaming implementation |
+**Leads:** `record_uid`, `lead_id`, `listing_id`, `lead_channel`, `buyer_intent`, `qualified_flag`, `lead_status`, `budget_band`, `lead_timestamp`.
 
----
+**Localities:** `record_uid`, `locality_id`, `locality_name`, `city`, `city_zone`, `market_segment`.
 
-## 2. Raw File Schema: `listings.parquet`
+**Brokers:** `record_uid`, `broker_id`, `agency_name`, `city`, `broker_tier`, `active_flag`, `onboarded_date`, `service_rating`.
 
-| Field Name | Data Type | Required? | Example | Description |
-|---|---|---|---|---|
-| `record_uid` | String | Yes | REC000001 | Physical unique record identifier |
-| `listing_id` | String | Yes | LIST100001 | Business identifier for the property listing |
-| `locality_id` | String | Yes | LOC001 | References the locality where the property is located |
-| `broker_id` | String | Yes | BR001 | References the broker managing the listing |
-| `property_type` | String | Yes | Apartment | Type of property |
-| `bedrooms` | Integer | No | 3 | Number of bedrooms |
-| `built_up_area_sqft` | Double | Yes | 1450.5 | Built-up area in square feet |
-| `asking_price_inr` | Decimal | Yes | 8500000 | Property asking price in INR |
-| `price_per_sqft` | Decimal | Yes | 5862 | Price per square foot |
-| `listing_status` | String | Yes | Active | Current listing status |
-| `listing_created_date` | Date | Yes | 2026-06-15 | Date when the listing was created |
+## Silver Candidate
+Candidate tables: `silver_propiq_listings_candidate`, `silver_propiq_leads_candidate`, `silver_propiq_localities_candidate`, `silver_propiq_brokers_candidate`.
 
----
+Derived controls include `calculated_price_per_sqft`, `price_per_sqft_variance`, `actual_days_on_market`, `days_since_last_update`, `is_completed`, and `is_chronology_valid`. Physical lineage is retained through `record_uid` and source/batch metadata.
 
-## 3. Raw File Schema: `leads.csv`
+## Gold contract
+**Dimensions:** `gold_dim_date`, `gold_dim_locality`, `gold_dim_property`, `gold_dim_broker`, `gold_dim_listing_status`, `gold_dim_price_band`, `gold_dim_lead_channel`.
 
-| Field Name | Data Type | Required? | Example | Description |
-|---|---|---|---|---|
-| `record_uid` | String | Yes | REC100001 | Physical unique record identifier |
-| `lead_id` | String | Yes | LEAD000001 | Unique lead identifier |
-| `listing_id` | String | Yes | LIST100001 | Property listing associated with the lead |
-| `lead_channel` | String | Yes | Website | Source from which the lead was generated |
-| `buyer_intent` | String | No | High | Buyer's interest level |
-| `qualified_flag` | Boolean | Yes | TRUE | Indicates whether the lead is qualified |
-| `lead_status` | String | Yes | Contacted | Current status of the lead |
+**Facts:** `gold_fact_listing` (one Trusted physical listing), `gold_fact_lead` (one Trusted physical lead).
 
----
+**Summaries:** `gold_locality_price_summary`, `gold_listing_performance_summary`, `gold_lead_conversion_summary`, `gold_broker_performance_summary`, `gold_inventory_age_summary`.
 
-## 4. Reference File Schema
+## Streaming event fields
+`listing_event_id`, `listing_id`, `event_type`, `event_timestamp`, `event_sequence`, `listing_status`, `asking_price`, `locality_id`, `broker_id`, `property_type`, `bedrooms`, `area_sqft`, `source_system`, `schema_version`, `ingestion_timestamp`, `_rescued_data`, `_corrupt_record`.
 
-### `localities.json`
-
-| Field Name | Data Type | Required? | Example | Description |
-|---|---|---|---|---|
-| `locality_id` | String | Yes | LOC001 | Unique locality identifier |
-| `locality_name` | String | Yes | Gachibowli | Name of the locality |
-| `city` | String | Yes | Hyderabad | City where the locality exists |
-| `city_zone` | String | Yes | West | Zone within the city |
-| `market_segment` | String | Yes | Premium | Market classification |
-
-### `brokers.csv`
-
-| Field Name | Data Type | Required? | Example | Description |
-|---|---|---|---|---|
-| `broker_id` | String | Yes | BR001 | Unique broker identifier |
-| `agency_name` | String | Yes | ABC Realty | Name of the broker agency |
-| `broker_tier` | String | Yes | Gold | Broker performance tier |
-| `service_rating` | Decimal | No | 4.6 | Customer service rating |
-
----
-
-## 5. Canonical Silver Table Design
-
-Final Silver tables
-
-```text
-silver_listings
-silver_leads
-silver_localities
-silver_brokers
-```
-
-### Example: `silver_listings`
-
-| Silver Field | Data Type | Source Mapping | Business Meaning |
-|---|---|---|---|
-| `record_uid` | String | listings.record_uid | Physical unique record identifier |
-| `listing_id` | String | listings.listing_id | Business listing identifier |
-| `listing_created_date` | Date | listings.listing_created_date | Listing creation date |
-| `locality_id` | String | listings.locality_id | Locality reference |
-| `broker_id` | String | listings.broker_id | Broker reference |
-| `asking_price_inr` | Decimal | listings.asking_price_inr | Property asking price |
-| `price_per_sqft` | Decimal | listings.price_per_sqft | Price per square foot |
-| `listing_status` | String | listings.listing_status | Current property listing status |
-
----
-
-## 6. Streaming Event Schema
-
-| Field Name | Data Type | Required? | Example | Description |
-|---|---|---|---|---|
-| `event_id` | String | Yes | EVT000001 | Unique streaming event identifier |
-| `event_timestamp` | Timestamp | Yes | 2026-07-03T10:15:00+05:30 | Timestamp when the event occurred |
-| `listing_id` | String | Yes | LIST100001 | Property listing associated with the event |
-| `event_type` | String | Yes | STATUS_UPDATED | Type of streaming event |
-| `old_status` | String | No | Active | Previous listing status |
-| `new_status` | String | Yes | Sold | Updated listing status |
-| `record_uid` | String | Yes | REC000001 | Physical record identifier associated with the event |
+## Governance
+- Power BI consumes Gold outputs only.
+- `record_uid` is the physical reconciliation key.
+- Approved categorical domains must not be invented from observed data.
+- Week 03 is profiling/relationship validation; full Bronze ingestion is Week 04.

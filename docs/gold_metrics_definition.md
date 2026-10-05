@@ -1,34 +1,43 @@
 # Gold Metrics Definition
 
 **Week:** 7  
-**Purpose:** Define dashboard-ready Gold tables and KPI formulas.
+**Input:** Trusted Silver only.
 
----
+## Gold table catalog
+| Object | Grain |
+|---|---|
+| `gold_dim_date` | one calendar date |
+| `gold_dim_locality` | one locality_id |
+| `gold_dim_property` | one property_type + furnishing combination |
+| `gold_dim_broker` | one broker_id |
+| `gold_dim_listing_status` | one listing_status |
+| `gold_dim_price_band` | one documented price band |
+| `gold_dim_lead_channel` | one lead_channel |
+| `gold_fact_listing` | one Trusted physical listing / record_uid |
+| `gold_fact_lead` | one Trusted physical lead / record_uid |
+| `gold_locality_price_summary` | one locality_id |
+| `gold_listing_performance_summary` | one locality_id |
+| `gold_lead_conversion_summary` | one locality_id |
+| `gold_broker_performance_summary` | one broker_id |
+| `gold_inventory_age_summary` | one locality_id |
 
-## 1. Gold Table Catalog
+## Eight KPI contracts
+1. **Active Listings:** distinct Trusted listings with active status.
+2. **Median Listing Price:** median Trusted asking price at listing grain.
+3. **Median Price per Sq Ft:** median Trusted `price_per_sqft`; never calculate after lead fan-out.
+4. **Lead Conversion Rate:** closed listings after qualified lead ÷ listings with qualified leads × 100.
+5. **Average Leads per Listing:** Trusted leads ÷ listings receiving leads; zero-lead listings excluded from denominator.
+6. **Average Days on Market:** status-aware days from creation to completion/today.
+7. **Stale Listing Rate:** active listings older than the declared threshold ÷ active listings × 100.
+8. **DQ Pass Rate:** Trusted evaluated rows ÷ total evaluated input rows × 100.
 
-| Gold Table Name | Grain | Source Table(s) | Purpose |
-|---|---|---|---|
-| `gold_[metric_table_1]` | One row per [grain] | `silver_[table]` | [purpose] |
-| `gold_[metric_table_2]` | One row per [grain] | `silver_[table]` | [purpose] |
+**Zero denominator:** return NULL/blank via `NULLIF(denominator, 0)`.
 
----
+**Stale threshold:** the notebook currently uses **90 days as a working parameter**. The approved playbook requires a documented threshold but does not publish a numeric value; the repository does not contain mentor approval for 90 days, so it must not be described as an approved final policy.
 
-## 2. KPI Definitions
-
-| KPI Name | Formula | Grain | Dashboard Page | Notes |
-|---|---|---|---|---|
-| `[KPI 1]` | `[formula]` | `[daily / weekly / category]` | `[page]` | `[notes]` |
-| `[KPI 2]` | `[formula]` | `[grain]` | `[page]` | `[notes]` |
-
----
-
-## 3. Validation Checks
-
-Before using Gold tables in Power BI, verify:
-
-- Gold row counts are reasonable.
-- No unexpected nulls exist in key dashboard fields.
-- KPI totals match manual spot checks.
-- Power BI connects to Gold outputs only.
-- Metric definitions are documented clearly.
+## Join safety
+- `gold_fact_listing` never joins leads.
+- `gold_fact_lead` remains at lead grain.
+- Listing-to-lead summaries re-aggregate to listing grain before locality roll-up.
+- Lookup keys are checked for uniqueness before joins.
+- Summary outputs are reconciled to their owning facts.

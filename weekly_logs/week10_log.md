@@ -1,61 +1,29 @@
-# Week 10 Log — [Sprint Name]
+# Week 10 Log — Controlled Structured Streaming Simulation
 
 **Week:** 10  
-**Date range:** [Add dates]  
-**Team:** [Team name / number]  
-**Project:** [Project title]
+**Team:** Team 15  
+**Project:** PropIQ – Real Estate Market Analytics
 
----
+## Goal
+Demonstrate controlled file-based Structured Streaming with explicit schema, checkpointing, watermarking, deduplication, sequence validation, quarantine and reconciliation.
 
-## 1. Sprint Goal
+## Captured results
+| Drop | Scenario | Physical | Trusted | Quarantine |
+|---|---|---:|---:|---:|
+| 01 | normal | 4 | 4 | 0 |
+| 02 | duplicate | 3 | 2 | 1 |
+| 03 | late/out-of-order | 3 | 1 | 2 |
+| 04 | malformed/reference | 3 | 1 | 2 |
+| 05 | invalid/future | 3 | 1 | 2 |
+| 06 | schema drift | 3 | 3 | 0 |
+| **Total** | | **19** | **12** | **7** |
 
-Write the goal for this week in 2–3 lines.
+Final controls: unaccounted 0; duplicate trusted event IDs 0; orphan listings in Trusted 0; late events in Trusted 0; sequence violations 0; invalid price/area in Trusted 0; future events in Trusted 0.
 
----
+No-new-file rerun: Bronze 19→19, Trusted 12→12, Quarantine 7→7, distinct trusted event IDs 12→12.
 
-## 2. Work Completed
+## Decisions
+Auto Loader + explicit schema; two-day watermark; `listing_event_id` deduplication; `foreachBatch` routing; quarantine-before-Trusted write order; Delta transaction idempotency.
 
-| Task | Owner | Status | Evidence |
-|---|---|---|---|
-| [Task] | [Student] | [Done / In progress] | [file / screenshot / notebook] |
-
----
-
-## 3. Key Decisions
-
-- [Decision 1]
-- [Decision 2]
-
----
-
-## 4. Blockers / Risks
-
-| Blocker | Impact | Help Needed |
-|---|---|---|
-| [Blocker] | [Impact] | [Help needed] |
-
----
-
-## 5. Evidence Added to GitHub
-
-- [File updated]
-- [Screenshot added]
-- [Notebook updated]
-
----
-
-## 6. AI Transparency Note
-
-| Question | Response |
-|---|---|
-| Where AI helped | [Explain] |
-| What we changed after AI suggestion | [Explain] |
-| What we verified manually | [Explain] |
-| What we can explain without AI | [Explain] |
-
----
-
-## 7. Next Week Preparation
-
-- [Action]
-- [Action]
+## AI transparency
+AI assisted with control-flow review and documentation. Drop outcomes, reconciliation and rerun behavior were checked from notebook execution evidence.

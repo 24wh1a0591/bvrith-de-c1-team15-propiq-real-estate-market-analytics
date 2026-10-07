@@ -13,15 +13,15 @@ Profile the four PropIQ source datasets, establish physical grain and business k
 
 | Task | Ownership | Status | Evidence |
 |---|---|---|---|
-| Profile Listings, Leads, Localities and Brokers schemas | Team 15 | Completed | `notebooks/01_data_exploration.ipynb` |
-| Identify physical reconciliation keys and business keys | Team 15 | Completed | `notebooks/01_data_exploration.ipynb` |
-| Validate Listings → Localities relationship | Team 15 | Completed | Listings-to-Localities anti-join |
-| Validate Listings → Brokers relationship | Team 15 | Completed | Listings-to-Brokers anti-join |
-| Validate Leads → Listings relationship | Team 15 | Completed | Leads-to-Listings anti-join |
-| Check listing/lead fan-out risk | Team 15 | Completed | Join-safety validation in exploration notebook |
-| Profile categorical domains | Team 15 | Completed | Domain profiling queries |
-| Create small Bronze demonstration | Team 15 | Completed | `propiq_week03_bronze_demo_listings` |
-| Create lineage demonstration view | Team 15 | Completed | Lineage demo view in exploration notebook |
+| Profile Listings, Leads, Localities and Brokers schemas | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/01_data_exploration.ipynb` |
+| Identify physical reconciliation keys and business keys | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/01_data_exploration.ipynb` |
+| Validate Listings → Localities relationship | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Listings-to-Localities anti-join |
+| Validate Listings → Brokers relationship | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Listings-to-Brokers anti-join |
+| Validate Leads → Listings relationship | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Leads-to-Listings anti-join |
+| Check listing/lead fan-out risk | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Join-safety validation in exploration notebook |
+| Profile categorical domains | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Domain profiling queries |
+| Create small Bronze demonstration | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `propiq_week03_bronze_demo_listings` |
+| Create lineage demonstration view | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Lineage demo view in exploration notebook |
 
 ## Data and relationship validation
 

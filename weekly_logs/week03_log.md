@@ -1,6 +1,7 @@
 # Week 03 Log — Data Exploration, Relationships and Join Safety
 
 **Week:** 3  
+**Date range:** 25 July 2026 – 30 July 2026  
 **Team:** Team 15  
 **Project:** PropIQ – Real Estate Market Analytics
 

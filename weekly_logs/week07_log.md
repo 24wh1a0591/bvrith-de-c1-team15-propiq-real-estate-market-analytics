@@ -1,8 +1,9 @@
 # Week 07 Log — Gold Model, KPIs and Reconciliation
 
 **Week:** 7  
-**Date range:** August 31 – September 6, 2026  
-**Team:** Team 15
+**Date range:** 31 August 2026 – 6 September 2026  
+**Team:** Team 15  
+**Project:** PropIQ – Real Estate Market Analytics
 
 ## Goal
 Build seven dimensions, two facts, five summaries and eight KPI contracts from Trusted Silver only.

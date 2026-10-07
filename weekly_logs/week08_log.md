@@ -1,96 +1,154 @@
 # Week 08 Log — Power BI Foundation and Gold Hand-off
 
 **Week:** 8  
-**Date range:** [Add dates]  
+**Date range:** 18 sep 2026 -22 sep 2026
 **Team:** Team 15  
-**Project:** PropIQ – Real Estate Market Analytics  
+**Project:** PropIQ – Real Estate Market Analytics
 
----
+## Sprint goal
 
-## 1. Sprint Goal
+Hand the validated Gold layer to Power BI using only approved Gold outputs, preserve the declared listing and lead grains, create the first working Power BI dashboard page, and reconcile selected Power BI values back to their owning Gold sources.
 
-Validate the approved Gold tables and prepare the governed Gold-to-Power BI hand-off. Export/connect the required Gold datasets, build the initial Power BI data model and first working dashboard page, and reconcile selected dashboard measures against their owning Gold tables.
+## Outcome
 
-The Power BI layer uses approved Gold data only, while preserving the grain and meaning of each Gold table.
+The validated Gold layer was handed off to Power BI without bypassing the governed Gold layer.
 
----
+The Power BI foundation was established using approved Gold outputs, separate listing and lead fact grains were preserved, selected report-facing values were checked against their Gold sources, and the first working dashboard page/model was established as the foundation for the continued three-page dashboard work in Week 09.
 
+## Work completed
 
-## 2. Work Completed
-
-| Task | Owner | Status | Evidence |
+| Task | Ownership | Status | Evidence |
 |---|---|---|---|
-| Reviewed approved Gold tables required for Power BI | Thota Madhulika | Done | Databricks / Gold source register |
-| Validated Gold table grain, keys and KPI purpose | Thota Madhulika | Done | Databricks notebook |
-| Created controlled Gold exports/connections for Power BI | Thota Madhulika | Done | `notebooks/06_powerbi_export.ipynb` |
-| Validated Gold-to-export row counts and selected fields | P. Lakshmi Naga Sree | Done | Export reconciliation output |
-| Imported approved Gold data into Power BI | P. Lakshmi Naga Sree | Done | Power BI model |
-| Configured Power BI field data types | Vadlamuru Rishitha | Done | Power BI model screenshot |
-| Reviewed relationships and cardinality between Gold tables | Vadlamuru Rishitha | Done | Power BI model |
-| Created initial Power BI measures and visuals | Vadlamuru Rishitha | Done | `dashboard/powerbi_dashboard.pbix` |
-| Created the first working dashboard page | All Members | Done | Power BI screenshot |
-| Reconciled selected Power BI values with Gold queries | All Members | Done | Reconciliation evidence |
-| Updated dashboard documentation and Week 08 evidence | All Members | Done | GitHub repository |
+| Validate approved Gold sources for Power BI hand-off | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Gold source validation |
+| Preserve listing and lead fact grains | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Power BI model / Gold contracts |
+| Prepare controlled Gold-to-Power-BI hand-off | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/06_powerbi_export.ipynb` |
+| Validate selected export/model values against Gold | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Export/read-back and reconciliation checks |
+| Establish Power BI model and first working page | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `dashboard/powerbi_dashboard.pbix` |
+| Document dashboard source/model/page mapping | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `dashboard/README.md` |
+| Prepare dashboard continuation for Week 09 | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Dashboard structure |
 
----
+## Files / Objects
 
-## 3. Key Decisions
+### Notebook
 
-- Power BI was connected only to approved Gold outputs.
-- Raw, Bronze, Silver Candidate, Trusted Silver detail and Quarantine data were not used directly in Power BI.
-- Gold tables with different grains were kept separate instead of being flattened into a single dataset.
-- Relationships were created only when the shared key, cardinality and filter direction were understood and considered safe.
-- Dashboard visuals were designed around business questions rather than simply creating one visual for every Gold table.
-- Important Power BI measures were traced back to their owning Gold tables.
-- Selected dashboard values were reconciled against Databricks Gold queries using the same filter context.
-- The Week 08 Power BI model will continue into Week 09 instead of being rebuilt.
+- `notebooks/06_powerbi_export.ipynb`
 
----
+### Gold export area
 
-## 4. Blockers / Risks
+- `data_sample/gold_exports/`
 
-| Blocker | Impact | Help Needed |
+### Power BI dashboard
+
+- `dashboard/powerbi_dashboard.pbix`
+- `dashboard/README.md`
+
+### Dashboard documentation
+
+- `docs/dashboard_insights.md`
+
+### Weekly evidence
+
+- `weekly_logs/week08_log.md`
+
+## Power BI source and grain controls
+
+Power BI consumes approved Gold outputs only.
+
+The Power BI hand-off does not bypass the governed pipeline by directly connecting to:
+
+- Raw source data
+- Bronze data
+- Silver Candidate data
+- Trusted Silver detail
+- Quarantine data
+
+The listing and lead facts remain at their respective approved grains.
+
+The Power BI model therefore does not use an uncontrolled raw/Silver join to manufacture dashboard metrics.
+
+## Validation
+
+| Validation check | Result | What it proves |
 |---|---|---|
-| Gold tables have different grains | Unsafe relationships can cause duplicated totals | Preserve individual table grains and review relationships |
-| Exported data must remain consistent with Gold | Power BI values may differ from Databricks | Re-run exports and reconcile with Gold |
-| Power BI can infer incorrect field types | Incorrect dates or aggregations may affect visuals | Manually verify field types |
-| Large Gold exports may increase repository size | Difficult GitHub management | Commit only small validated exports where appropriate |
-| Filter context can change dashboard measures | Visual values may not match Gold | Reconcile important measures using identical filters |
+| Gold source validation | Completed | Selected Power BI inputs come from approved Gold outputs |
+| Grain validation | Completed | Listing and lead fact grains remain separated |
+| Export/model value validation | Completed | Selected report-facing values agree with Gold |
+| Gold-to-Power-BI reconciliation | Completed | Selected dashboard values can be traced back to their owning Gold sources |
+| Power BI source check | Completed | Dashboard does not bypass the governed Gold hand-off |
 
----
+Selected export/model values were reviewed against the corresponding Gold outputs before being used in the dashboard.
 
-## 5. Evidence Added to GitHub
+## Blockers / Rework
 
-- Updated `notebooks/06_powerbi_export.ipynb`
-- Added validated Gold exports under `data_sample/gold_exports/` where applicable
-- Added `dashboard/powerbi_dashboard.pbix`
-- Updated `dashboard/README.md`
-- Added Gold source register evidence
-- Added Gold-to-export reconciliation screenshot
-- Added Power BI model screenshot
-- Added first working dashboard screenshot
-- Added measure-to-Gold reconciliation evidence
-- Updated `weekly_logs/week08_log.md`
+The main control for Week 08 was preventing Power BI from becoming a second transformation layer.
 
----
+The dashboard therefore uses the governed Gold outputs rather than rebuilding business logic from raw, Bronze, Silver Candidate or Trusted Silver detail.
 
-## 6. AI Transparency Note
+Any dashboard-level calculations must remain consistent with the approved Gold KPI definitions and grain contracts.
 
-| Question | Response |
-|---|---|
-| Where AI helped | AI helped structure the Gold export workflow, explain Power BI modelling patterns, identify possible grain and relationship risks, and organize the Week 08 documentation. |
-| What we changed after AI suggestion | We adapted the suggested workflow to the actual PropIQ Gold tables, preserved separate table grains, selected only required Gold fields, and reviewed relationship decisions manually. |
-| What we verified manually | Gold table existence, grain, exported data, field types, Power BI relationships, measures, dashboard values and reconciliation results were checked manually. |
-| What we can explain without AI | The team can explain the Gold-to-Power BI workflow, Gold table grain, relationship risks, Power BI modelling decisions and reconciliation process. |
+## Individual Contribution
 
----
+### Thota Madhulika
 
-## 7. Next Week Preparation
+- Participated in the Power BI foundation and Gold hand-off work.
+- Participated in validation of the selected Gold-to-Power-BI values.
+- Backup responsibility: review source/grain consistency and reconciliation.
+- Speaking responsibility: explain the Gold-to-Power-BI hand-off, source selection and grain controls.
 
-- Continue with the same Power BI model.
-- Complete and refine the remaining dashboard pages.
-- Improve visual hierarchy, labels, layout and usability.
-- Test slicers and filter interactions.
-- Develop evidence-backed dashboard insights.
-- Reconcile important filtered dashboard values with their owning Gold tables.
-- Prepare presentation-ready dashboard evidence.
+### P. Lakshmi Naga Sree
+
+- Participated in Power BI modelling and dashboard foundation work.
+- Participated in validation of the selected report-facing data.
+- Backup responsibility: review dashboard model relationships and downstream impact.
+- Speaking responsibility: explain the Power BI model, selected sources and relationship controls.
+
+### Vadlamuru Rishitha
+
+- Participated in dashboard evidence, documentation and downstream readiness work.
+- Participated in reviewing the Power BI hand-off and dashboard structure.
+- Backup responsibility: review validation evidence and dashboard documentation.
+- Speaking responsibility: explain dashboard evidence, reconciliation and downstream readiness.
+
+## Mentor Rework Status
+
+**Status:** Review / validation completed for the Week-08 hand-off.
+
+The Week-08 scope remains limited to the Power BI foundation and first working dashboard page.
+
+Dashboard refinement and the broader insight/story work continue into Week 09.
+
+## GitHub Evidence
+
+The primary Week-08 evidence paths are:
+
+- `notebooks/06_powerbi_export.ipynb`
+- `data_sample/gold_exports/`
+- `dashboard/powerbi_dashboard.pbix`
+- `dashboard/README.md`
+- `docs/dashboard_insights.md`
+- `weekly_logs/week08_log.md`
+
+These artifacts provide the implementation, hand-off, dashboard and documentation evidence for the week.
+
+## AI Transparency Note
+
+AI assisted with Power BI modelling checks, documentation organization and review of the Gold-to-dashboard hand-off.
+
+The generated suggestions were treated as implementation support rather than authoritative project decisions.
+
+The team manually reviewed:
+
+- Gold source selection.
+- Listing and lead grain separation.
+- Power BI model relationships.
+- Selected export/model values.
+- Gold-to-Power-BI reconciliation.
+- Dashboard source and documentation.
+
+The students remain responsible for explaining the dashboard model, Gold source contracts, relationship decisions and validation results.
+
+## Next Week Preparation
+
+Week 09 will continue from the established Power BI foundation.
+
+The next stage should focus on dashboard refinement, business insight development, KPI presentation and user-facing analytical storytelling without bypassing the governed Gold layer.

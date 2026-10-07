@@ -1,61 +1,22 @@
-# Week 11 Log — [Sprint Name]
+# Week 11 Log — Integration, Traceability and Rebuild Runbook
 
 **Week:** 11  
-**Date range:** [Add dates]  
-**Team:** [Team name / number]  
-**Project:** [Project title]
+**Team:** Team 15  
+**Project:** PropIQ – Real Estate Market Analytics
 
----
+## Goal
+Integrate batch and streaming evidence into a defensible end-to-end runbook and trace dashboard outputs to Gold and Trusted inputs.
 
-## 1. Sprint Goal
+## Work completed
+- Documented exact notebook execution order.
+- Documented Gold-only Power BI consumption.
+- Documented source-to-dashboard traceability.
+- Documented upstream correction/rebuild rules.
+- Integrated Week-10 streaming reconciliation and rerun evidence.
+- Reviewed repository navigation and final evidence locations.
 
-Write the goal for this week in 2–3 lines.
+## Rebuild rule
+Never patch Gold to repair an upstream error. Re-run from the earliest affected layer, then rerun DQ, Gold validation and the Power BI handoff.
 
----
-
-## 2. Work Completed
-
-| Task | Owner | Status | Evidence |
-|---|---|---|---|
-| [Task] | [Student] | [Done / In progress] | [file / screenshot / notebook] |
-
----
-
-## 3. Key Decisions
-
-- [Decision 1]
-- [Decision 2]
-
----
-
-## 4. Blockers / Risks
-
-| Blocker | Impact | Help Needed |
-|---|---|---|
-| [Blocker] | [Impact] | [Help needed] |
-
----
-
-## 5. Evidence Added to GitHub
-
-- [File updated]
-- [Screenshot added]
-- [Notebook updated]
-
----
-
-## 6. AI Transparency Note
-
-| Question | Response |
-|---|---|
-| Where AI helped | [Explain] |
-| What we changed after AI suggestion | [Explain] |
-| What we verified manually | [Explain] |
-| What we can explain without AI | [Explain] |
-
----
-
-## 7. Next Week Preparation
-
-- [Action]
-- [Action]
+## AI transparency
+AI assisted with runbook structure and traceability wording. Actual notebook/table names and execution evidence were used for the final version.

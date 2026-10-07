@@ -1,116 +1,145 @@
 # Week 07 Log — Gold Model, KPIs and Reconciliation
 
 **Week:** 7  
-**Date range:** August 31 – September 6, 2026  
+**Date range:** 31 August 2026 – 6 September 2026  
 **Team:** Team 15  
-**Project:** P15 PropIQ — Real Estate Market Analytics  
+**Project:** PropIQ – Real Estate Market Analytics
 
----
+## Sprint goal
 
-## 1. Sprint Goal
+Build the governed Gold dimensional model, fact tables, approved summaries and KPI contracts using Trusted Silver only, while maintaining grain, join safety and reconciliation controls.
 
-Build the Gold-layer data model for PropIQ using only Trusted Silver data.
+## Work completed
 
-Implement the governed dimensions, listing and lead facts, approved summary tables, and KPI definitions while validating data grain, join safety, reconciliation, and rerun consistency.
-
----
-
-## 2. Work Completed
-
-| Task | Owner | Status | Evidence |
+| Task | Ownership | Status | Evidence |
 |---|---|---|---|
-| Confirmed Week-6 Trusted Silver handoff | Thota Madhulika | Done | `notebooks/05_gold_aggregations.ipynb` |
-| Reconciled Candidate, Trusted, and Quarantine records | Thota Madhulika | Done | Notebook Section 3.1 |
-| Validated lookup-key uniqueness before joins | Thota Madhulika | Done | Notebook Section 4 |
-| Built 7 governed dimensions | P. Lakshmi Naga Sree | Done | Gold dimension tables |
-| Built `fact_listing` at `record_uid` grain | P. Lakshmi Naga Sree | Done | Notebook Section 6 |
-| Built `fact_lead` at `record_uid` grain | P. Lakshmi Naga Sree | Done | Notebook Section 7 |
-| Implemented 8 approved KPI definitions | Vadlamuru Rishitha | Done | Notebook Sections 8–9 |
-| Built 5 Gold summary tables | Vadlamuru Rishitha | Done | Notebook Section 12 |
-| Performed Gold-to-Trusted reconciliation | Thota Madhulika | Done | Notebook Section 11 |
-| Performed controlled rerun validation | Vadlamuru Rishitha | Done | Notebook Section 14 |
-| Added Gold-layer validation and evidence queries | All Members | In Progress | Notebook Sections 13–16 |
+| Build seven governed dimensions | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/05_gold_aggregations.ipynb` |
+| Build listing fact | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `gold_fact_listing` |
+| Build lead fact | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `gold_fact_lead` |
+| Build five approved summaries | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Gold aggregation notebook |
+| Implement eight KPI contracts | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `docs/gold_metrics_definition.md` |
+| Validate fact/summary reconciliation | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Broker summary reconciliation |
+| Validate join safety | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Gold modelling logic |
+| Perform controlled rerun check | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Rerun evidence |
 
-### Week-6 Handoff Reconciliation
+## Gold dimensions
 
-| Entity | Candidate Rows | Trusted Rows | Quarantine Rows | Status |
-|---|---:|---:|---:|---|
-| Listings | 50,200 | 49,000 | 1,200 | PASS |
-| Leads | 120,800 | 118,000 | 2,800 | PASS |
-| Localities | 80 | 80 | 0 | PASS |
-| Brokers | 320 | 320 | 0 | PASS |
+The governed Gold model contains seven dimensions:
 
----
+1. `gold_dim_date`
+2. `gold_dim_locality`
+3. `gold_dim_property`
+4. `gold_dim_broker`
+5. `gold_dim_listing_status`
+6. `gold_dim_price_band`
+7. `gold_dim_lead_channel`
 
-## 3. Key Decisions
+## Gold facts
 
-- Gold tables use **Trusted Silver only**; Quarantine tables are not used as Gold inputs.
-- `fact_listing` and `fact_lead` remain separate to prevent lead-level fan-out from inflating listing-level measures.
-- `fact_listing` uses one row per physical listing identified by `record_uid`.
-- `fact_lead` uses one row per physical lead identified by `record_uid`.
-- Join-safety checks are performed before aggregations.
-- Median Price per Sq Ft is calculated from listing-level data without introducing lead fan-out.
-- Average Days on Market uses a status-aware end date.
-- Zero-denominator cases are handled explicitly.
-- The stale-listing threshold and price-band boundaries are treated as documented parameters rather than silently assumed as final.
-- Summary tables are aggregated at their declared grains and validated against the underlying fact tables.
-- Controlled rerun validation is used to confirm deterministic Gold outputs.
-- KPI definitions and Gold table structures are maintained consistently with the PropIQ data model and approved project requirements.
+Two fact tables were implemented:
 
----
+- `gold_fact_listing`
+- `gold_fact_lead`
 
-## 4. Blockers / Risks
+The listing fact remains at listing/`record_uid` grain, while the lead fact remains at lead grain.
 
-| Blocker / Risk | Impact | Help Needed |
-|---|---|---|
-| Stale-listing age threshold requires confirmation | KPI output may change if the approved threshold differs | Mentor confirmation |
-| Price-band boundaries require confirmation | `dim_price_band` and related analysis may require adjustment | Mentor confirmation |
-| Summary-table grains are documented design choices | Final reporting grain may change if a different grain is approved | Mentor confirmation |
-| Manual spot-check queries contain placeholder IDs | Final manual traceability evidence is incomplete | Replace with actual listing/locality/broker IDs |
+This separation prevents the one-to-many listing-to-lead relationship from multiplying listing-level fact rows.
 
----
+## Gold summaries
 
-## 5. Evidence Added to GitHub
+Five approved summary tables were implemented:
+
+1. `gold_locality_price_summary`
+2. `gold_listing_performance_summary`
+3. `gold_lead_conversion_summary`
+4. `gold_broker_performance_summary`
+5. `gold_inventory_age_summary`
+
+## KPI contracts
+
+Eight KPI contracts were defined:
+
+| KPI | Contract |
+|---|---|
+| Active Listings | Active listing count from the governed listing-grain source |
+| Median Listing Price | Median listing price |
+| Median Price per Sq Ft | Median price per square foot |
+| Lead Conversion Rate | Converted leads divided by the defined lead denominator |
+| Average Leads per Listing | Lead count evaluated at the listing-grain reporting level |
+| Average Days on Market | Average governed listing age / days-on-market measure |
+| Stale Listing Rate | Stale listings divided by the applicable active-listing denominator |
+| DQ Pass Rate | Trusted records divided by the applicable Candidate population |
+
+Zero denominators are handled as `NULL`/blank using the defined `NULLIF` approach rather than producing misleading numerical values.
+
+## Join-safety controls
+
+The Gold model follows these join-safety rules:
+
+- `gold_fact_listing` does not directly join to the lead fact for listing-grain metrics.
+- `gold_fact_lead` remains at lead grain.
+- Listing-to-lead metrics are re-aggregated to the required listing/reporting grain before locality or other dimensional roll-ups.
+- Lookup keys are checked for uniqueness.
+- Summary outputs are reconciled to their owning fact tables.
+
+These controls prevent one-to-many relationships from inflating listing-level metrics.
+
+## Evidence and reconciliation
+
+The broker performance summary reconciled to the listing fact:
+
+- Broker summary total: **49,000**
+- Listing fact total: **49,000**
+- Reconciliation: **PASS**
+
+A controlled rerun resulted in:
+
+**Changed business rows = 0**
+
+Concrete manual spot-check identifiers captured in the project artifacts include:
+
+- `LOC-001`
+- `BRK-0204`
+- `LST-0000001`
+
+The notebook's former placeholder manual queries were identified as invalid and their stale outputs were cleared. A fresh rerun is required before treating new manual spot-check output as current execution evidence.
+
+## Stale listing threshold governance
+
+The Gold implementation documents **90 days** as a working parameter for stale-listing analysis.
+
+The approved playbook does not publish a numeric stale threshold as final policy.
+
+Therefore, 90 days must not be represented as a mentor-approved or governance-approved permanent threshold.
+
+## Blockers / Risks / Rework
+
+The primary governance consideration was the distinction between a working analytical parameter and an approved policy threshold.
+
+The 90-day stale threshold is therefore documented as a working parameter only.
+
+A second evidence limitation concerns the manual spot-check queries: previously captured placeholder outputs were not treated as fresh evidence. Fresh execution is required for current manual spot-check results.
+
+## GitHub Evidence
+
+Primary implementation and documentation evidence:
 
 - `notebooks/05_gold_aggregations.ipynb`
 - `docs/gold_metrics_definition.md`
-- `P15-D05.png`
 - `weekly_logs/week07_log.md`
-- Gold dimension tables
-- `fact_listing`
-- `fact_lead`
-- Five approved Gold summary tables
-- Gold validation and reconciliation queries
-- Controlled rerun validation evidence
 
----
+The notebook contains the Gold dimensions, facts, summaries and validation logic. The Gold metrics definition documents the KPI contracts, denominator handling, grain and join-safety rules.
 
-## 6. AI Transparency Note
+## AI Transparency Note
 
-| Question | Response |
-|---|---|
-| **Where AI helped** | AI was used to support the structuring of the Gold-layer workflow, KPI-contract organization, validation logic, and technical documentation. |
-| **What we changed after AI suggestion** | The suggested approach was adapted to the PropIQ playbook, actual Trusted Silver table names, approved KPI definitions, declared grains, join-safety requirements, and Gold object names. |
-| **What we verified manually** | Trusted input availability, Week-6 reconciliation, lookup-key uniqueness, fact grain preservation, lead-to-listing references, Gold reconciliation, and controlled rerun results were verified using executed SQL queries. |
-| **What we can explain without AI** | We can explain fact and dimension design, grain preservation, join fan-out, KPI denominators, aggregation logic, reconciliation, and rerun validation. |
+AI assisted with KPI-contract organization, validation-query structure and documentation review.
 
----
+Trusted inputs, fact grain, join safety, reconciliation evidence and rerun controls were checked against the Gold notebook and project documentation.
 
-## 7. Next Week Preparation
+The 90-day stale threshold is explicitly retained as a working parameter rather than being presented as an approved governance policy.
 
-- Obtain mentor confirmation for the stale-listing threshold.
-- Obtain mentor confirmation for price-band boundaries.
-- Confirm the approved grains for the Gold summary tables.
-- Replace placeholder IDs with real listing, locality, and broker IDs for manual spot checks.
-- Finalize `docs/gold_metrics_definition.md`.
-- Complete the remaining Week-7 exit-checklist evidence.
-- Prepare the validated Gold-layer outputs for the Power BI handoff.
-- Prepare the approved Gold tables for Week-8 export and dashboard integration.
+## Next Week Preparation
 
----
+The completed Gold model provides the governed analytical layer for downstream reporting.
 
-## Week 07 Outcome
-
-The Gold-layer implementation was developed from **Trusted Silver data only**, with separate listing and lead facts, governed dimensions, approved summary tables, KPI definitions, reconciliation checks, and controlled rerun validation.
-
-The Week-6 source reconciliation passed for listings, leads, localities, and brokers. The Gold layer is prepared for the next phase, with the remaining documented items focused on mentor confirmation of KPI parameters and completion of manual traceability spot checks.
+Future reporting work should consume the approved Gold dimensions, facts and summaries without bypassing the Trusted Silver and Gold grain controls.

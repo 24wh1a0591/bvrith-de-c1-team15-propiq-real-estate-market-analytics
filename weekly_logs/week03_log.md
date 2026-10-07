@@ -1,84 +1,95 @@
-# Week 03 Log — Data Exploration & Source Validation
+# Week 03 Log — Data Exploration, Relationships and Join Safety
 
 **Week:** 3  
-**Date range:** [Add dates]  
+**Date range:** 25 July 2026 – 30 July 2026  
 **Team:** Team 15  
-**Project:** PropIQ – Real Estate Market Analytics  
-
----
+**Project:** PropIQ – Real Estate Market Analytics
 
 ## 1. Sprint Goal
 
-The objective of this sprint was to explore the PropIQ source datasets in Databricks, understand their structure, validate data quality, and prepare the foundation for the Bronze layer. The team created temporary SQL views, performed validation checks, and implemented a Bronze demonstration workflow.
-
----
+Profile the four PropIQ source datasets, establish physical grain and business keys, validate source relationships, identify join and fan-out risks, and create only the approved Week-03 Bronze demonstration.
 
 ## 2. Work Completed
 
-| Task | Owner | Status | Evidence |
-|------|------|--------|----------|
-| Uploaded PropIQ source files to Databricks Volume | Thota Madhulika | Done | Databricks Volume |
-| Explored Listings and Localities datasets | Thota Madhulika | Done | `01_data_exploration.ipynb` |
-| Explored Leads and Brokers datasets | P. Lakshmi Naga Sree | Done | Notebook |
-| Created PySpark DataFrames for all datasets | Thota Madhulika | Done | Notebook |
-| Created temporary Spark SQL views | P. Lakshmi Naga Sree | Done | Databricks Notebook |
-| Performed schema exploration and business key identification | Vadlamuru Rishitha | Done | Notebook screenshots |
-| Performed row count and distinct key validation | Vadlamuru Rishitha | Done | SQL Queries |
-| Checked missing values and invalid records | Vadlamuru Rishitha | Done | Notebook |
-| Validated relationships (Listings ↔ Leads) | All Members | Done | SQL Join Validation |
-| Created Bronze demonstration table | P. Lakshmi Naga Sree | Done | `propiq_week03_bronze_demo_listings` |
-| Performed source-to-demo reconciliation | Vadlamuru Rishitha | Done | SQL Results |
-| Created lineage demonstration view | Thota Madhulika | Done | `propiq_week03_lineage_demo_view` |
-| Added notebook documentation and explanations | All Members | Done | GitHub Repository |
-
----
+| Task | Ownership | Status | Evidence |
+|---|---|---|---|
+| Profile Listings, Leads, Localities and Brokers schemas | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_profiling_validation_01.png` |
+| Identify physical reconciliation keys and business keys | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_profiling_validation_01.png` |
+| Validate Listings → Localities relationship | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_relationship_validation_02.png` |
+| Validate Listings → Brokers relationship | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_relationship_validation_02.png` |
+| Validate Leads → Listings relationship | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_relationship_validation_02.png` |
+| Check listing/lead fan-out risk | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_join_safety_validation_03.png` |
+| Profile categorical domains | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week03_exploration_profiling_validation_01.png` |
+| Create small Bronze demonstration | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `notebooks/01_data_exploration.ipynb` |
+| Create lineage demonstration view | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `notebooks/01_data_exploration.ipynb` |
 
 ## 3. Key Decisions
 
-- Used Spark SQL as the primary language for structured exploration and validation.
-- Implemented only one Bronze demonstration table as per Week-3 scope instead of full ingestion.
-- Restricted implementation strictly to exploration and validation without moving into Silver/Gold layers.
-- Used temporary SQL views to validate transformations before persistence.
-
----
+1. `record_uid` is retained as the physical reconciliation key.
+2. Business keys are used for relationship validation and downstream modelling.
+3. One-to-many lead relationships must not change the intended listing grain.
+4. Categorical domains are profiled from available source data without inventing an approved governance dictionary.
+5. Week 03 is limited to source profiling, relationship validation, join-safety checks and the approved Bronze demonstration.
+6. Full Bronze ingestion remains within Week 04 scope.
 
 ## 4. Blockers / Risks
 
-| Blocker | Impact | Help Needed |
-|--------|--------|-------------|
-| PageLoop notebook mismatch with PropIQ schema | Required significant query modifications | Verified mappings using playbook and data dictionary |
-| Dataset path issues in Databricks | Execution failures | Corrected volume paths and file references |
-| Schema differences between datasets | Increased debugging time | Manual validation of schemas and keys |
+The original exploration notebook contained PageLoop/loan-related remnants that were not applicable to PropIQ.
 
----
+The notebook was reworked to use PropIQ-specific exploration and validation logic.
+
+The reworked scope covers:
+
+- Source profiling.
+- Physical and business-key validation.
+- Relationship integrity.
+- Anti-join checks.
+- Listing/lead fan-out safety.
+- Limited Bronze demonstration.
+
+No full Bronze, Silver, Gold, Power BI or streaming implementation was included in Week 03.
 
 ## 5. Evidence Added to GitHub
 
-- Updated `notebooks/01_data_exploration.ipynb`  
-- Added Week-3 exploration screenshots  
-- Added SQL validation queries  
-- Added Bronze demonstration table implementation  
-- Added lineage demonstration view  
-- Updated documentation  
+### Implementation
 
----
+- `notebooks/01_data_exploration.ipynb`
+- `weekly_logs/week03_log.md`
+
+### Exploration and validation evidence
+
+- `screenshots/week03_exploration_profiling_validation_01.png`
+- `screenshots/week03_exploration_relationship_validation_02.png`
+- `screenshots/week03_exploration_join_safety_validation_03.png`
+
+### Repository evidence
+
+- `screenshots/week03_evidence_commit_history.png`
+- `screenshots/week03_evidence_overall_commit_history.png`
+
+### Evidence mapping
+
+| Validation area | Repository evidence |
+|---|---|
+| Source profiling | `screenshots/week03_exploration_profiling_validation_01.png` |
+| Physical/business-key validation | `screenshots/week03_exploration_profiling_validation_01.png` |
+| Listings → Localities | `screenshots/week03_exploration_relationship_validation_02.png` |
+| Listings → Brokers | `screenshots/week03_exploration_relationship_validation_02.png` |
+| Leads → Listings | `screenshots/week03_exploration_relationship_validation_02.png` |
+| Listing/lead fan-out | `screenshots/week03_exploration_join_safety_validation_03.png` |
+| Bronze demonstration / implementation | `notebooks/01_data_exploration.ipynb` |
+| Commit evidence | `screenshots/week03_evidence_commit_history.png` and `screenshots/week03_evidence_overall_commit_history.png` |
 
 ## 6. AI Transparency Note
 
-| Question | Response |
-|---------|----------|
-| Where AI helped | Helped convert PageLoop notebook logic into PropIQ context and improve documentation clarity |
-| What we changed after AI suggestion | Corrected dataset paths, replaced schema fields, and fixed SQL queries |
-| What we verified manually | Schema validation, query execution, temporary views, Bronze demo table, and lineage checks |
-| What we can explain without AI | Full exploration workflow, validation logic, Spark SQL usage, and Bronze demo implementation |
+AI assisted with restructuring and reviewing the Week-03 exploration workflow and documentation.
 
----
+The team verified the dataset paths, source fields, physical/business keys, relationship checks, grain decisions and Week-03 scope against the project artifacts.
+
+AI assistance did not replace the validation evidence contained in the exploration notebook and repository screenshots.
 
 ## 7. Next Week Preparation
 
-- Implement full Bronze layer ingestion for all datasets  
-- Standardize ingestion into Delta tables  
-- Begin planning Silver Candidate transformations  
-- Prepare for data quality checks and reconciliation  
+The validated source structure and relationship findings provide the basis for Week-04 Bronze ingestion.
 
----
+Week 04 should build the complete Bronze layer from the validated source inputs while preserving physical lineage and source-level records.

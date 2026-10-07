@@ -1,73 +1,98 @@
 # Week 05 Log — Silver Candidate Transformation
 
 **Week:** 5  
-**Date range:** [Add dates]  
+**Date range:** 1 August 2026 – 7 August 2026  
 **Team:** Team 15  
-**Project:** PropIQ – Real Estate Market Analytics  
+**Project:** PropIQ – Real Estate Market Analytics
 
----
+## Sprint goal
 
-## 1. Sprint Goal
+Transform the validated Bronze inputs into typed and normalized Silver Candidate datasets while preserving source lineage, physical grain and reconciliation keys.
 
-Convert Bronze datasets into structured Silver Candidate tables by applying schema standardization, data type casting, and domain-specific transformations. Ensure all datasets are aligned with the PropIQ data dictionary and ready for Data Quality validation in the next phase.
+## Work completed
 
----
+| Task | Ownership | Status | Evidence |
+|---|---|---|---|
+| Standardize Listings Bronze data | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/03_silver_transformations.ipynb` |
+| Standardize Leads Bronze data | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/03_silver_transformations.ipynb` |
+| Standardize Localities Bronze data | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/03_silver_transformations.ipynb` |
+| Standardize Brokers Bronze data | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | `notebooks/03_silver_transformations.ipynb` |
+| Apply safe type casting | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Silver transformation notebook |
+| Normalize date and timestamp fields | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Silver transformation notebook |
+| Derive listing-level analytical fields | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Silver transformation notebook |
+| Preserve `record_uid` and source lineage | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Silver Candidate outputs |
+| Produce four Silver Candidate datasets | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Completed | Candidate tables |
 
-## 2. Work Completed
+## Silver Candidate outputs
 
-| Task | Owner | Status | Evidence |
-|------|------|--------|----------|
-| Loaded Bronze datasets (listings, leads, brokers, localities) | Thota Madhulika | Done | Notebook cells |
-| Standardized column names and schema for listings & localities | Thota Madhulika | Done | Notebook |
-| Transformed leads dataset (timestamp casting, renaming) | P. Lakshmi Naga Sree | Done | Notebook |
-| Transformed brokers dataset (schema alignment, type fixes) | P. Lakshmi Naga Sree | Done | Notebook |
-| Applied data type casting across all datasets | Vadlamuru Rishitha | Done | Notebook |
-| Validated schema consistency and column formats | Vadlamuru Rishitha | Done | Output display |
-| Created Silver Candidate tables (`silver_candidate_*`) | All Members | Done | Databricks tables |
+The Week-05 transformation produced the following Candidate datasets:
 
----
+- `silver_propiq_listings_candidate`
+- `silver_propiq_leads_candidate`
+- `silver_propiq_localities_candidate`
+- `silver_propiq_brokers_candidate`
 
-## 3. Key Decisions
+The Candidate layer is intended to provide typed, normalized and lineage-preserving inputs for the subsequent Data Quality stage.
 
-- No joins were performed in the Silver layer to preserve dataset grain and avoid duplication issues.
-- Standardized timestamp formats across all datasets to ensure consistency for downstream processing.
-- Retained unique identifiers (listing_id, lead_id, broker_id) for traceability and future joins in Gold layer.
+## Listings-derived fields
 
----
+The Listings Candidate transformation includes the following derived controls and analytical fields:
 
-## 4. Blockers / Risks
+- `actual_days_on_market`
+- `days_since_last_update`
+- `is_completed`
+- `is_chronology_valid`
+- `calculated_price_per_sqft`
+- `price_per_sqft_variance`
 
-| Blocker | Impact | Help Needed |
-|--------|--------|-------------|
-| Inconsistent column naming in Bronze layer | Slowed transformation logic | Required manual mapping to data dictionary |
-| Null values in key attributes | Risk for DQ failures | Will handle in Week 06 validation rules |
-| Ambiguity in some field mappings | Possible schema mismatch | Cross-verification with playbook |
+These fields support later validation and Gold-layer analytical requirements.
 
----
+## Grain and lineage decisions
 
-## 5. Evidence Added to GitHub
+The Silver Candidate transformation preserves the physical reconciliation key `record_uid` and source/batch lineage information.
 
-- Updated Week 05 Silver Candidate transformation notebook  
-- Added schema output screenshots  
-- Uploaded sample outputs for all 4 datasets  
-- Documented transformation steps in notebook  
+Candidate construction is row-preserving. Week 05 does not perform the final filtering, deduplication or quarantine decisions.
 
----
+No cross-entity joins are required for Candidate construction.
 
-## 6. AI Transparency Note
+This separation keeps transformation and Data Quality responsibilities distinct:
 
-| Question | Response |
-|---------|----------|
-| Where AI helped | Helped convert PageLoop notebook into PropIQ format and guided schema alignment |
-| What we changed after AI suggestion | Removed incorrect joins, fixed column names, added proper data type casting |
-| What we verified manually | Schema structure, column mappings, data types, and final outputs |
-| What we can explain without AI | Entire Silver transformation process and reasoning behind design decisions |
+**Bronze → Silver Candidate → Data Quality → Trusted/Quarantine**
 
----
+## Key decisions
 
-## 7. Next Week Preparation
+1. Candidate tables remain row-preserving.
+2. `record_uid` is preserved for physical reconciliation and lineage.
+3. Type casting and date/timestamp normalization are performed during Candidate construction.
+4. Analytical derived fields are calculated without silently removing invalid records.
+5. Invalid or suspicious values remain visible for the Week-06 Data Quality stage.
+6. Quarantine decisions are not performed during Week 05.
 
-- Implement Data Quality (DQ) rules on Silver Candidate datasets  
-- Split data into Trusted and Quarantine layers based on validation results  
+## Blockers / Risks / Rework
 
----
+The main control for this stage is avoiding premature filtering.
+
+Candidate transformations therefore do not silently remove records that may later fail Data Quality rules.
+
+The downstream DQ stage is responsible for classifying records into Trusted and Quarantine while preserving failure reasons and reconciliation information.
+
+## GitHub Evidence
+
+Primary implementation evidence:
+
+- `notebooks/03_silver_transformations.ipynb`
+- `weekly_logs/week05_log.md`
+
+The Silver transformation notebook contains the Candidate-table construction, type normalization, derived-field logic and lineage-preservation implementation.
+
+## AI Transparency Note
+
+AI assisted with schema mapping, transformation organization and documentation review.
+
+The actual source fields, Candidate table names, derived fields and transformation boundaries were checked against the Silver transformation notebook and PropIQ project data definitions.
+
+## Next Week Preparation
+
+The four Candidate datasets produced in Week 05 are the inputs for the Week-06 Data Quality stage.
+
+Week 06 should validate the Candidate records, apply the approved DQ rules, and route records into Trusted or Quarantine without losing reconciliation or failure information.

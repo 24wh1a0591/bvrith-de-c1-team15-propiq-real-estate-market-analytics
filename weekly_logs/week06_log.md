@@ -1,87 +1,145 @@
-# Week 06 Log — Data Quality, Trusted Silver & Quarantine
+# Week 06 Log — Data Quality, Trusted Silver and Quarantine
 
 **Week:** 6  
-**Date range:** [Add dates]  
+**Date range:** 24 August 2026 – 30 August 2026  
 **Team:** Team 15  
-**Project:** PropIQ – Real Estate Market Analytics  
+**Project:** PropIQ – Real Estate Market Analytics
 
----
+**Executed evidence:** notebook records execution on 2026-08-28
 
 ## 1. Sprint Goal
 
-Implement the PropIQ Data Quality layer by validating the four Week-05 Silver Candidate datasets against the approved P15-DQ-01 through P15-DQ-08 rules.
-
-Route valid records to Trusted Silver and failed records to Quarantine while preserving `record_uid`, applicable DQ failure IDs, severity, failure reasons, and reconciliation evidence.
-
----
+Validate the Silver Candidate datasets using the approved PropIQ Data Quality rules, reconcile Candidate-to-Trusted/Quarantine counts, preserve failure information, and establish Trusted Silver outputs for downstream Gold modelling.
 
 ## 2. Work Completed
 
-| Task | Owner | Status | Evidence |
-|------|-------|--------|----------|
-| Reviewed and mapped P15-DQ-01 to P15-DQ-08 rules to the Silver Candidate datasets | Team 15 | Done | Team 15 DQ Rules PDF / Notebook |
-| Implemented DQ checks for listings including key, reference, range, price-per-sqft, completion-date and domain validations | Team 15 | Done | Week 06 DQ Notebook |
-| Implemented DQ checks for localities | Team 15 | Done | Week 06 DQ Notebook |
-| Implemented DQ checks for leads including listing reference and timestamp validation | Team 15 | Done | Week 06 DQ Notebook |
-| Implemented DQ checks for brokers and categorical-domain validation | Team 15 | Done | Week 06 DQ Notebook |
-| Implemented physical-record routing using `record_uid` | Team 15 | Done | Week 06 DQ Notebook |
-| Added Trusted Silver and Quarantine outputs for all four entities | Team 15 | Done | Databricks Tables / Notebook |
-| Preserved multiple applicable DQ failures for the same physical record | Team 15 | Done | Quarantine Output |
-| Added Candidate → Trusted + Quarantine reconciliation checks | Team 15 | Done | Validation Cells |
-| Added Trusted/Quarantine overlap validation | Team 15 | Done | Validation Cells |
-| Corrected `_bronze_record_hash` reference to the actual `_record_hash` column | Team 15 | Done | Databricks Execution / Corrected Notebook |
-| Removed the unavailable `propiq_governed_domains` dependency from the DQ-07 implementation | Team 15 | Done | Corrected Notebook |
-
----
+| Task | Ownership | Status | Evidence |
+|---|---|---|---|
+| Execute approved DQ rules | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `notebooks/04_data_quality_checks.ipynb` |
+| Validate Candidate record counts | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_initial_record_count_check.jpeg` |
+| Validate DQ rule results | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_listing_rule_check.jpeg`, `screenshots/week06_dq_lead_rule_check.jpeg`, `screenshots/week06_dq_locality_rule_check.jpeg`, `screenshots/week06_dq_broker_rule_check.jpeg` |
+| Route valid records to Trusted | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_trusted_quarantine_output_check.jpeg` |
+| Route failed records to Quarantine | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_trusted_quarantine_output_check.jpeg` |
+| Validate failed-record / multi-rule quarantine results | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_failed_record_count_check.jpeg`, `screenshots/week06_dq_multi_rule_quarantine_check.jpeg` |
+| Validate Trusted/Quarantine reconciliation | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_reconciliation_check.jpeg` |
+| Validate route separation / membership | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `screenshots/week06_dq_reconciliation_check.jpeg` |
+| Document DQ limitation | Thota Madhulika; P. Lakshmi Naga Sree; Vadlamuru Rishitha | Done | `docs/data_quality_summary.md` |
 
 ## 3. Key Decisions
 
-- Used `record_uid` as the physical routing and reconciliation key instead of business keys such as `listing_id`, `lead_id`, `locality_id`, or `broker_id`.
-- A record can fail multiple DQ rules, so all applicable failure IDs, severity levels, and failure reasons are retained instead of stopping at the first failure.
-- Records that pass the applicable DQ checks are routed to Trusted Silver, while failed records are routed to the corresponding Quarantine table.
-- Candidate records must reconcile exactly to Trusted plus Quarantine records so that no failed physical record disappears.
-- Used the actual Candidate schema column `_record_hash` instead of the incorrect `_bronze_record_hash` reference.
-- Removed the `propiq_governed_domains` dependency because the table was not available in the Databricks environment. The supplied Team 15 DQ specification identifies `unknown-new-code` as an example of an unapproved categorical value but does not provide a complete domain dictionary.
-
----
+1. DQ routing uses `record_uid` for physical reconciliation.
+2. Passing records are routed to Trusted and failed records to Quarantine.
+3. Candidate records must reconcile to Trusted + Quarantine.
+4. Trusted and Quarantine must not overlap.
+5. Rule-failure counts are not treated as unique quarantined-record counts because one physical record may fail multiple rules.
+6. Failure information is preserved rather than silently dropping invalid records.
+7. P15-DQ-07 is limited because the approved categorical-domain dictionary was unavailable.
+8. No invented allowed-value list is used to compensate for the unavailable governance dependency.
+9. Replay of corrected records should occur upstream through the source and Silver Candidate flow rather than manually inserting records into Trusted.
 
 ## 4. Blockers / Risks
 
-| Blocker | Impact | Help Needed |
-|---------|--------|-------------|
-| `_bronze_record_hash` column was not present in the Silver Candidate table | Initial notebook execution failed | Corrected to the actual `_record_hash` column |
-| `propiq_governed_domains` table was not available in the Databricks workspace | Original DQ-07 governance check failed | Removed the unavailable dependency and retained the DQ-07 implementation supported by the approved DQ specification |
-| Complete approved categorical domain values were not provided in the supplied DQ document | Full domain-dictionary validation cannot be implemented without unsupported assumptions | Separate approved domain dictionary is required if complete domain-value enforcement is needed |
+The primary governance limitation was the unavailable approved categorical-domain dependency required for complete P15-DQ-07 validation.
 
----
+The `propiq_governed_domains` dependency was unavailable in Databricks.
+
+Therefore, an inferred categorical list was not treated as an approved governance dictionary.
+
+The limitation is explicitly documented in:
+
+`docs/data_quality_summary.md`
+
+The DQ implementation also distinguishes between:
+
+- Rule-failure counts.
+- Unique quarantined physical records.
+- Trusted records.
+- Candidate reconciliation.
+- Trusted/Quarantine overlap.
 
 ## 5. Evidence Added to GitHub
 
-- Updated Week 06 Data Quality notebook
-- Added DQ validation and routing queries
-- Added Trusted Silver and Quarantine validation outputs
-- Added Candidate-to-Trusted/Quarantine reconciliation checks
-- Added Databricks execution/error screenshots
-- Updated `weekly_logs/week06_log.md`
-- Documented corrections made during notebook validation
+### Implementation
 
----
+- `notebooks/04_data_quality_checks.ipynb`
+- `docs/data_quality_summary.md`
+- `weekly_logs/week06_log.md`
+
+### DQ evidence screenshots
+
+- `screenshots/week06_dq_initial_record_count_check.jpeg`
+- `screenshots/week06_dq_listing_rule_check.jpeg`
+- `screenshots/week06_dq_lead_rule_check.jpeg`
+- `screenshots/week06_dq_locality_rule_check.jpeg`
+- `screenshots/week06_dq_broker_rule_check.jpeg`
+- `screenshots/week06_dq_failed_record_count_check.jpeg`
+- `screenshots/week06_dq_multi_rule_quarantine_check.jpeg`
+- `screenshots/week06_dq_trusted_quarantine_output_check.jpeg`
+- `screenshots/week06_dq_reconciliation_check.jpeg`
+
+### Evidence mapping
+
+| Validation area | Repository evidence |
+|---|---|
+| Initial Candidate counts | `screenshots/week06_dq_initial_record_count_check.jpeg` |
+| Listings DQ rules | `screenshots/week06_dq_listing_rule_check.jpeg` |
+| Leads DQ rules | `screenshots/week06_dq_lead_rule_check.jpeg` |
+| Localities DQ rules | `screenshots/week06_dq_locality_rule_check.jpeg` |
+| Brokers DQ rules | `screenshots/week06_dq_broker_rule_check.jpeg` |
+| Failed-record count | `screenshots/week06_dq_failed_record_count_check.jpeg` |
+| Multi-rule quarantine validation | `screenshots/week06_dq_multi_rule_quarantine_check.jpeg` |
+| Trusted/Quarantine outputs | `screenshots/week06_dq_trusted_quarantine_output_check.jpeg` |
+| Candidate → Trusted + Quarantine reconciliation | `screenshots/week06_dq_reconciliation_check.jpeg` |
+| DQ rule scorecard and limitation | `docs/data_quality_summary.md` |
+
+## DQ Reconciliation
+
+The executed reconciliation produced:
+
+| Entity | Candidate | Trusted | Quarantine | Variance |
+|---|---:|---:|---:|---:|
+| Listings | 50,200 | 49,000 | 1,200 | 0 |
+| Localities | 80 | 80 | 0 | 0 |
+| Leads | 120,800 | 118,000 | 2,800 | 0 |
+| Brokers | 320 | 320 | 0 | 0 |
+
+Candidate-to-Trusted/Quarantine variance was **0 for all four entities**.
+
+Trusted/Quarantine overlap was **0**, and route-membership checks returned **0**.
+
+## DQ Rule-Failure Results
+
+| Rule | Failed rows |
+|---|---:|
+| P15-DQ-01 | 500 |
+| P15-DQ-02 | 200 |
+| P15-DQ-03 | 200 |
+| P15-DQ-04 | 350 |
+| P15-DQ-05 | 150 |
+| P15-DQ-06 | 1,200 |
+| P15-DQ-07 | 0 |
+| P15-DQ-08 | 1,600 |
+| **Total** | **4,200** |
+
+A physical record may contribute to multiple rule-failure counts. Therefore, 4,200 is the total rule-failure count and not the number of unique quarantined records.
 
 ## 6. AI Transparency Note
 
-| Question | Response |
-|----------|----------|
-| Where AI helped | Helped structure the Week 06 DQ notebook, map the approved PropIQ DQ rules to SQL validation logic, and identify issues during notebook debugging. |
-| What we changed after AI suggestion | Corrected the invalid `_bronze_record_hash` reference to `_record_hash` after checking the actual Databricks schema. Removed the unavailable `propiq_governed_domains` dependency after Databricks reported that the table could not be found. |
-| What we verified manually | Verified the actual column name from the Databricks error output, checked the available schema/search path, and validated that the corrected notebook no longer referenced the unavailable governance table. |
-| What we can explain without AI | The purpose of P15-DQ-01 through P15-DQ-08, physical `record_uid` routing, Trusted versus Quarantine logic, multi-rule failure retention, and Candidate-to-Trusted/Quarantine reconciliation. |
+AI assisted with rule-to-SQL mapping, validation-query organization and debugging support.
 
----
+The team manually verified:
+
+- The actual DQ outputs.
+- Candidate-to-Trusted/Quarantine reconciliation.
+- `_record_hash` usage.
+- Rule-failure counts.
+- Trusted/Quarantine routing.
+- The unavailable `propiq_governed_domains` dependency.
+
+No unsupported governance values were invented to fill the DQ-07 limitation.
 
 ## 7. Next Week Preparation
 
-- Complete and verify the final Trusted Silver and Quarantine outputs for all four PropIQ entities.
-- Validate Candidate = Trusted + Quarantine reconciliation for every required source and batch.
-- Confirm there is no overlap between Trusted and Quarantine `record_uid` values.
-- Review any remaining DQ-07 domain requirements with the team.
-- Prepare the validated Trusted Silver datasets for the next stage of the PropIQ pipeline.
+The validated Trusted Silver datasets provide the controlled input boundary for Week 07 Gold modelling.
+
+Gold dimensions, facts, summaries and KPI contracts should consume Trusted Silver only and preserve the approved grain, reconciliation and join-safety rules.

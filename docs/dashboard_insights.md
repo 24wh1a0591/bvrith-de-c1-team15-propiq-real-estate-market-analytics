@@ -1,110 +1,268 @@
 # Dashboard Insights
 
-**Week:** 9  
-**Purpose:** Explain what the Power BI dashboard shows.
+**Purpose:** Define the three-page Power BI story, its Gold lineage, evidence requirements and validation controls.
+
+**Reporting source:** Governed Gold outputs only.
 
 ---
 
-## 1. Dashboard Pages
+## 1. Three-Page Dashboard Story
 
-| Page | Purpose | Main Visuals |
+The Power BI dashboard is organized around three business questions.
+
+### Page 1 — Market Overview
+
+**Business question:** What is happening in the market?
+
+This page provides the overall market view using governed listing, lead, locality pricing and lead-conversion outputs.
+
+Primary analytical focus:
+
+- Overall listing activity.
+- Market pricing.
+- Lead activity.
+- Lead-conversion performance.
+- High-level market context.
+
+The page must use approved Gold measures and must not recreate pipeline logic from lower layers.
+
+---
+
+### Page 2 — Locality & Pricing Intelligence
+
+**Business question:** Where is inventory and how does pricing differ?
+
+This page focuses on locality-level market structure and pricing variation.
+
+Primary analytical focus:
+
+- Locality inventory.
+- Locality pricing.
+- Property mix.
+- Price-per-square-foot behaviour.
+- Locality-level comparisons.
+
+The page uses the governed locality and listing-grain Gold objects.
+
+---
+
+### Page 3 — Listing / Broker / Lead
+
+**Business question:** Which listings, brokers and lead channels are performing?
+
+This page combines performance views across listing, broker and lead activity while preserving the separate listing and lead fact grains.
+
+Primary analytical focus:
+
+- Listing performance.
+- Broker performance.
+- Lead conversion.
+- Lead-channel performance.
+- Inventory age.
+
+---
+
+## 2. Evidence Rule
+
+Numerical claims must not be stated solely from what appears in a dashboard visual.
+
+Before reporting a numerical insight:
+
+1. Identify the Power BI visual and measure.
+2. Identify the owning Gold table or summary.
+3. Apply the same filter context.
+4. Compare the dashboard value with the Gold value.
+5. Record or retain sufficient evidence to explain the reconciliation.
+
+A dashboard value is treated as validated only when it can be traced to its governed Gold source under the same filter context.
+
+---
+
+## 3. Gold Traceability
+
+| Page | Primary Gold Objects | Primary Analytical Purpose |
 |---|---|---|
-| Page 1: Market Overview | High-level real-estate market summary | Active listings, lead metrics, monthly listing trend, property type/price-band distribution, locality inventory, listing-age distribution |
-| Page 2: Locality & Pricing Intelligence | Analyse locality-level pricing and inventory patterns | Median listing price, median price/sqft, locality comparison, property-type pricing, locality pricing table |
-| Page 3: Listing / Broker / Lead | Analyse listing, broker and lead performance | Broker performance, lead-channel distribution, lead conversion, inventory age, average days on market, average leads per listing, lead funnel |
+| Market Overview | `gold_fact_listing`, `gold_fact_lead`, `gold_locality_price_summary`, `gold_lead_conversion_summary` | Market activity, pricing and lead performance |
+| Locality & Pricing Intelligence | `gold_locality_price_summary`, `gold_fact_listing`, governed dimensions | Locality inventory, pricing and property mix |
+| Listing / Broker / Lead | `gold_broker_performance_summary`, `gold_lead_conversion_summary`, `gold_listing_performance_summary`, `gold_inventory_age_summary`, governed facts/dimensions | Listing, broker, lead and inventory performance |
 
 ---
 
-## 2. Key Insights
+## 4. KPI Traceability
 
-Write 5–8 insights from the dashboard.
+Dashboard KPIs must match the definitions documented in:
 
-1. **Market Overview:**  
-   The Market Overview page provides a consolidated view of active listings, pricing, lead activity, listing trends and inventory age.
+`docs/gold_metrics_definition.md`
 
-2. **Listing Trend:**  
-   The monthly listing trend can be used to identify changes in listing activity over the selected reporting period.
+The dashboard must not redefine KPI semantics independently.
 
-3. **Property and Price Distribution:**  
-   The property-type and price-band visual shows how listings are distributed across different property configurations and price segments.
+Relevant governed KPI contracts include:
 
-4. **Locality Inventory:**  
-   The locality inventory visual compares active listing volumes across localities and helps identify differences in available inventory.
+- Active Listings
+- Median Listing Price
+- Median Price per Sq Ft
+- Lead Conversion Rate
+- Average Leads per Listing
+- Average Days on Market
+- Stale Listing Rate
+- DQ Pass Rate
 
-5. **Locality Pricing:**  
-   The Locality & Pricing Intelligence page compares median listing prices and median price per square foot across localities.
-
-6. **Property-Type Pricing:**  
-   Property-type analysis allows differences in price per square foot to be compared across property configurations.
-
-7. **Broker and Lead Performance:**  
-   The Listing / Broker / Lead page compares broker-level listing performance together with qualified lead activity.
-
-8. **Lead and Inventory Performance:**  
-   Lead conversion, lead-channel distribution, average leads per listing, stale listing rate and average days on market provide an operational view of listing and lead performance.
-
-> **Note:** Any numerical claim, highest/lowest ranking, percentage, or specific locality/broker observation must be added only after verifying the displayed Power BI value against the corresponding Gold table.
+Where a dashboard visual uses a derived measure, the measure must remain consistent with the corresponding Gold KPI contract.
 
 ---
 
-## 3. How the Dashboard Uses Gold Tables
+## 5. Fact-Grain Controls
 
-| Dashboard Page | Gold Table Used | Important Fields |
-|---|---|---|
-| Market Overview | `gold_locality_price_summary` | `active_listings`, `median_price_per_sqft`, `median_listing_price` |
-| Market Overview | `gold_fact_listing` | `listing_id`, `listing_created_date`, `is_completed`, `days_on_market_status_aware` |
-| Market Overview | `gold_fact_lead` | `lead_id` |
-| Market Overview | `gold_lead_conversion_summary` | `lead_conversion_rate_pct` |
-| Market Overview | `gold_dim_date` | `date_key` |
-| Market Overview | `gold_dim_locality` | `city`, `locality_name` |
-| Market Overview | `gold_dim_property` | `property_type` |
-| Market Overview | `gold_dim_price_band` | `price_band` |
-| Locality & Pricing Intelligence | `gold_locality_price_summary` | `locality_name`, `total_listings`, `median_listing_price`, `median_price_per_sqft`, `active_listings` |
-| Locality & Pricing Intelligence | `gold_fact_listing` | `calculated_price_per_sqft`, `price_per_sqft`, `listing_id` |
-| Locality & Pricing Intelligence | `gold_dim_locality` | `locality_name`, `city` |
-| Locality & Pricing Intelligence | `gold_dim_property` | `property_type` |
-| Locality & Pricing Intelligence | `gold_dim_date` | `date_key` |
-| Listing / Broker / Lead | `gold_broker_performance_summary` | `agency_name`, `Qualified Lead Rate`, `total_listings` |
-| Listing / Broker / Lead | `gold_dim_lead_channel` | `lead_channel` |
-| Listing / Broker / Lead | `gold_fact_lead` | `lead_id`, `lead_timestamp`, `lead_channel_key`, `listing_id`, `lead_status`, `buyer_intent`, `qualified_flag` |
-| Listing / Broker / Lead | `gold_lead_conversion_summary` | `lead_conversion_rate_pct`, `avg_leads_per_listing` |
-| Listing / Broker / Lead | `gold_inventory_age_summary` | `stale_listing_rate_pct` |
-| Listing / Broker / Lead | `gold_listing_performance_summary` | `active_listing_count`, `stale_listing_count`, `avg_days_on_market` |
-| Listing / Broker / Lead | `gold_dim_locality` | `locality_name` |
-| Listing / Broker / Lead | `gold_dim_property` | `property_type` |
-| Listing / Broker / Lead | `gold_dim_date` | `date_key` |
+The dashboard must preserve the declared Gold fact grains:
+
+### Listing fact
+
+`gold_fact_listing`
+
+**Grain:** One Trusted physical listing / `record_uid`.
+
+### Lead fact
+
+`gold_fact_lead`
+
+**Grain:** One Trusted physical lead / `record_uid`.
+
+The two facts remain separate to prevent one-to-many listing-to-lead relationships from multiplying listing-level rows.
 
 ---
 
-## 4. Power BI Validation
+## 6. Join-Safety Rule
 
-- [ ] Dashboard connects to Gold outputs only.
-- [ ] Market Overview uses approved Gold listing, lead, locality, property and price-band sources.
-- [ ] Locality & Pricing Intelligence uses approved Gold pricing and listing sources.
-- [ ] Listing / Broker / Lead uses approved Gold broker, listing, lead and inventory sources.
-- [ ] Filters work correctly.
-- [ ] Date, locality, city and property-type filters behave as expected.
-- [ ] KPI totals match Gold table checks.
-- [ ] Lead conversion matches the approved Gold definition.
-- [ ] Pricing metrics match the approved Gold definitions.
-- [ ] Listing and lead facts are not incorrectly joined in a way that creates fan-out.
-- [ ] Important dashboard values reconcile with their owning Gold tables.
-- [ ] Screenshots are saved in `screenshots/`.
-- [ ] Dashboard story is explainable by all students.
+The dashboard must not introduce lead fan-out.
+
+In particular:
+
+- Listing-level metrics must remain based on listing grain.
+- Lead-level metrics must remain based on lead grain.
+- Listing-to-lead calculations must use governed re-aggregation where required.
+- A direct one-to-many join must not be used to calculate listing-level metrics.
+- Relationship behaviour must remain consistent with the Gold model.
+
+Any metric that changes unexpectedly because of a listing-to-lead relationship must be treated as a validation failure.
 
 ---
 
-## 5. Dashboard Insight Traceability
+## 7. Page-Level Traceability
 
-Each important dashboard observation should be traceable through:
+### Page 1 — Market Overview
+
+| Analytical area | Primary Gold source |
+|---|---|
+| Listing activity | `gold_fact_listing` |
+| Market pricing | `gold_fact_listing` / `gold_locality_price_summary` |
+| Lead activity | `gold_fact_lead` |
+| Lead conversion | `gold_lead_conversion_summary` |
+
+### Page 2 — Locality & Pricing Intelligence
+
+| Analytical area | Primary Gold source |
+|---|---|
+| Locality inventory | `gold_fact_listing` |
+| Locality pricing | `gold_locality_price_summary` |
+| Property mix | `gold_dim_property` |
+| Price analysis | `gold_fact_listing` / `gold_locality_price_summary` |
+| Locality filtering | `gold_dim_locality` |
+
+### Page 3 — Listing / Broker / Lead
+
+| Analytical area | Primary Gold source |
+|---|---|
+| Listing performance | `gold_listing_performance_summary` |
+| Broker performance | `gold_broker_performance_summary` |
+| Lead conversion | `gold_lead_conversion_summary` |
+| Inventory age | `gold_inventory_age_summary` |
+| Broker filtering | `gold_dim_broker` |
+| Lead-channel analysis | `gold_dim_lead_channel` |
+| Listing analysis | `gold_fact_listing` |
+
+---
+
+## 8. Validation Checklist
+
+Before accepting a dashboard page or numerical insight, verify:
+
+- [ ] Gold-only sources are used.
+- [ ] Correct fact grain is preserved.
+- [ ] No lead fan-out occurs.
+- [ ] KPI definitions match `docs/gold_metrics_definition.md`.
+- [ ] Power BI relationships match the governed Gold model.
+- [ ] Important filtered dashboard values reconcile to Gold.
+- [ ] Numerical claims can be traced to their owning Gold object.
+- [ ] No lower-layer data is introduced to compensate for a dashboard result.
+
+---
+
+## 9. Numerical Insight Rule
+
+Numerical statements in documentation, presentations or demonstrations should be made only after validation against Gold.
+
+Do not state a numerical insight merely because a dashboard visual displays a value.
+
+Examples of claims requiring reconciliation include:
+
+- Total active listings.
+- Median listing price.
+- Median price per square foot.
+- Lead conversion rate.
+- Average leads per listing.
+- Average days on market.
+- Stale listing rate.
+- DQ pass rate.
+- Locality-level or broker-level ranking values.
+
+Qualitative observations may describe patterns visible in the dashboard, but numerical values must remain traceable to the governed Gold source.
+
+---
+
+## 10. Filter-Context Rule
+
+Gold reconciliation must use the same effective filter context as the Power BI visual.
+
+Relevant filter context may include:
+
+- Date.
+- Locality.
+- Property type.
+- Furnishing.
+- Broker.
+- Listing status.
+- Price band.
+- Lead channel.
+
+A value is not considered reconciled if the Power BI visual and Gold validation query use materially different filters.
+
+---
+
+## 11. Source Boundary
+
+The dashboard consumes Gold outputs only.
+
+The following are not valid direct dashboard sources:
+
+- Raw source files.
+- Bronze tables.
+- Silver Candidate tables.
+- Trusted Silver detail tables.
+- Quarantine tables.
+
+Lower-layer inspection may be used for debugging or lineage investigation, but dashboard metrics must be derived from governed Gold outputs.
+
+---
+
+## 12. Metric and Lineage Governance
+
+Every important dashboard measure should be explainable through the following chain:
 
 ```text
-Power BI Visual
+Power BI visual
       ↓
-Power BI Measure / Field
+Power BI measure
       ↓
-Owning Gold Table
+Gold object / KPI contract
       ↓
-Gold Validation Query
-      ↓
-Verified Business Observation
+Trusted Silver governed input

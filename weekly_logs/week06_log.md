@@ -1,8 +1,11 @@
 # Week 06 Log — Data Quality, Trusted Silver and Quarantine
 
 **Week:** 6  
-**Executed evidence:** notebook records execution on 2026-08-28  
-**Team:** Team 15
+**Date range:** 24 August 2026 – 30 August 2026  
+**Team:** Team 15  
+**Project:** PropIQ – Real Estate Market Analytics
+
+**Executed evidence:** notebook records execution on 2026-08-28
 
 ## Results
 Candidate → Trusted + Quarantine variance was 0:

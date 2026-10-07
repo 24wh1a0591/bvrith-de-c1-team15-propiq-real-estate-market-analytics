@@ -1,6 +1,7 @@
 # Week 05 Log — Silver Candidate Transformation
 
 **Week:** 5  
+**Date range:** 1 August 2026 – 7 August 2026  
 **Team:** Team 15  
 **Project:** PropIQ – Real Estate Market Analytics
 

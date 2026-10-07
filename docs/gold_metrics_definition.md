@@ -1,43 +1,119 @@
 # Gold Metrics Definition
 
 **Week:** 7  
-**Input:** Trusted Silver only.
+**Input:** Trusted Silver only  
+**Layer:** Gold  
+**Purpose:** Define the governed Gold objects, their grain, KPI contracts, denominator behaviour and join-safety rules used by downstream reporting and Power BI.
 
-## Gold table catalog
-| Object | Grain |
-|---|---|
-| `gold_dim_date` | one calendar date |
-| `gold_dim_locality` | one locality_id |
-| `gold_dim_property` | one property_type + furnishing combination |
-| `gold_dim_broker` | one broker_id |
-| `gold_dim_listing_status` | one listing_status |
-| `gold_dim_price_band` | one documented price band |
-| `gold_dim_lead_channel` | one lead_channel |
-| `gold_fact_listing` | one Trusted physical listing / record_uid |
-| `gold_fact_lead` | one Trusted physical lead / record_uid |
-| `gold_locality_price_summary` | one locality_id |
-| `gold_listing_performance_summary` | one locality_id |
-| `gold_lead_conversion_summary` | one locality_id |
-| `gold_broker_performance_summary` | one broker_id |
-| `gold_inventory_age_summary` | one locality_id |
+---
 
-## Eight KPI contracts
-1. **Active Listings:** distinct Trusted listings with active status.
-2. **Median Listing Price:** median Trusted asking price at listing grain.
-3. **Median Price per Sq Ft:** median Trusted `price_per_sqft`; never calculate after lead fan-out.
-4. **Lead Conversion Rate:** closed listings after qualified lead ÷ listings with qualified leads × 100.
-5. **Average Leads per Listing:** Trusted leads ÷ listings receiving leads; zero-lead listings excluded from denominator.
-6. **Average Days on Market:** status-aware days from creation to completion/today.
-7. **Stale Listing Rate:** active listings older than the declared threshold ÷ active listings × 100.
-8. **DQ Pass Rate:** Trusted evaluated rows ÷ total evaluated input rows × 100.
+## 1. Gold Layer Contract
 
-**Zero denominator:** return NULL/blank via `NULLIF(denominator, 0)`.
+The Gold layer is built exclusively from Trusted Silver inputs.
 
-**Stale threshold:** the notebook currently uses **90 days as a working parameter**. The approved playbook requires a documented threshold but does not publish a numeric value; the repository does not contain mentor approval for 90 days, so it must not be described as an approved final policy.
+Gold objects must preserve their declared grain and must not introduce row multiplication through uncontrolled one-to-many joins.
 
-## Join safety
-- `gold_fact_listing` never joins leads.
-- `gold_fact_lead` remains at lead grain.
-- Listing-to-lead summaries re-aggregate to listing grain before locality roll-up.
-- Lookup keys are checked for uniqueness before joins.
-- Summary outputs are reconciled to their owning facts.
+The Gold layer provides:
+
+- Governed dimensions.
+- Listing and lead facts at separate grains.
+- Approved analytical summaries.
+- KPI definitions with explicit denominator handling.
+- Join-safety controls for listing-to-lead relationships.
+- Reconciliation points for downstream reporting.
+
+---
+
+## 2. Gold Table Catalog
+
+| Object | Grain | Purpose |
+|---|---|---|
+| `gold_dim_date` | One calendar date | Calendar/date analysis |
+| `gold_dim_locality` | One `locality_id` | Locality-level reporting |
+| `gold_dim_property` | One property type + furnishing combination | Property-mix analysis |
+| `gold_dim_broker` | One `broker_id` | Broker analysis |
+| `gold_dim_listing_status` | One `listing_status` | Listing-status analysis |
+| `gold_dim_price_band` | One documented price band | Price-band analysis |
+| `gold_dim_lead_channel` | One `lead_channel` | Lead-channel analysis |
+| `gold_fact_listing` | One Trusted physical listing / `record_uid` | Listing-grain measures |
+| `gold_fact_lead` | One Trusted physical lead / `record_uid` | Lead-grain measures |
+| `gold_locality_price_summary` | One `locality_id` | Locality pricing metrics |
+| `gold_listing_performance_summary` | One `locality_id` | Listing performance metrics |
+| `gold_lead_conversion_summary` | One `locality_id` | Lead conversion metrics |
+| `gold_broker_performance_summary` | One `broker_id` | Broker performance metrics |
+| `gold_inventory_age_summary` | One `locality_id` | Inventory-age metrics |
+
+---
+
+## 3. Fact-Grain Contract
+
+### `gold_fact_listing`
+
+**Grain:** One Trusted physical listing identified by `record_uid`.
+
+Listing-level measures must be calculated at listing grain.
+
+The listing fact must not be joined directly to lead records for listing-grain calculations.
+
+### `gold_fact_lead`
+
+**Grain:** One Trusted physical lead identified by `record_uid`.
+
+Lead-level measures remain at lead grain.
+
+Lead records must not be treated as additional listing rows.
+
+### Grain rule
+
+The listing and lead facts remain separate because the relationship between listings and leads can be one-to-many.
+
+Directly joining these facts for listing-level calculations can multiply listing rows and produce inflated metrics.
+
+---
+
+## 4. Eight KPI Contracts
+
+### 1. Active Listings
+
+**Definition:** Distinct Trusted listings with active status.
+
+**Grain:** Listing.
+
+**Denominator:** Not applicable.
+
+The calculation must use distinct Trusted listing records and the governed active-status definition.
+
+---
+
+### 2. Median Listing Price
+
+**Definition:** Median Trusted asking price calculated at listing grain.
+
+**Grain:** Listing.
+
+Only the governed Trusted listing population is included.
+
+The metric must not be calculated after a lead join or any other operation that can duplicate listing rows.
+
+---
+
+### 3. Median Price per Sq Ft
+
+**Definition:** Median Trusted `price_per_sqft`.
+
+**Grain:** Listing.
+
+`price_per_sqft` is evaluated from the governed listing-level data.
+
+The metric must never be calculated after lead fan-out.
+
+---
+
+### 4. Lead Conversion Rate
+
+**Definition:**
+
+```text
+closed listings after qualified lead
+------------------------------------ × 100
+listings with qualified leads
